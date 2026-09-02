@@ -4,8 +4,9 @@
   "description": "Ghanaian Perfume Social-Commerce and E-Commerce Platform",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
+    "postinstall": "prisma generate",
     "import": "node scripts/import-media.js",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push"
