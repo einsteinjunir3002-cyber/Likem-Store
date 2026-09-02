@@ -1,0 +1,334 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  READY_FOR_DELIVERY
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum OrderSource {
+  WEBSITE
+  WHATSAPP
+  INSTAGRAM
+  TIKTOK
+  SNAPCHAT
+  MANUAL_ADMIN
+}
+
+enum StoreStatus {
+  OPEN
+  PAUSED
+  CLOSED
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  STORE_MANAGER
+  ORDER_MANAGER
+  CONTENT_MANAGER
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  RESOLVED
+  ARCHIVED
+}
+
+model AdminUser {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  name         String
+  passwordHash String
+  role         AdminRole   @default(SUPER_ADMIN)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  auditLogs    AuditLog[]
+  inventoryLogs InventoryLog[]
+}
+
+model Customer {
+  id           String      @id @default(uuid())
+  email        String?     @unique
+  phone        String      @unique
+  fullName     String
+  passwordHash String?
+  address      String?
+  region       String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  orders       Order[]
+  wishlists    WishlistItem[]
+  reviews      Review[]
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Brand {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id                 String          @id @default(uuid())
+  name               String
+  slug               String          @unique
+  brandId            String?
+  brand              Brand?          @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  categoryId         String?
+  category           Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  description        String?
+  shortDescription   String?
+  priceInGhs         Decimal         @default(0) @db.Decimal(10, 2)
+  salePriceInGhs     Decimal?        @db.Decimal(10, 2)
+  sku                String?         @unique
+  stock              Int             @default(0)
+  size               String?         // e.g. "100ml"
+  concentration      String?         // e.g. "Eau De Parfum"
+  gender             String?         // "Women", "Men", "Unisex"
+  fragranceFamily    String?         // "Oriental Floral", "Woody", etc.
+  topNotes           String?
+  middleNotes        String?
+  baseNotes          String?
+  ingredients        String?
+  requiresInformation Boolean        @default(true)
+  status             ProductStatus   @default(DRAFT)
+  isFeatured         Boolean         @default(false)
+  seoTitle           String?
+  seoDescription     String?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  
+  images             ProductImage[]
+  variants           ProductVariant[]
+  orderItems         OrderItem[]
+  wishlists          WishlistItem[]
+  reviews            Review[]
+  inventoryLogs      InventoryLog[]
+}
+
+model ProductVariant {
+  id         String   @id @default(uuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size       String   // e.g. "30ml", "50ml", "100ml"
+  priceInGhs Decimal  @db.Decimal(10, 2)
+  stock      Int      @default(0)
+  sku        String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  orderItems OrderItem[]
+}
+
+model Media {
+  id           String         @id @default(uuid())
+  filename     String
+  originalName String
+  url          String
+  mimeType     String
+  fileSize     Int
+  width        Int?
+  height       Int?
+  sha256       String         @unique
+  altText      String?
+  createdAt    DateTime       @default(now())
+  
+  productImages ProductImage[]
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  mediaId   String
+  media     Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  isPrimary Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id             String        @id @default(uuid())
+  orderNumber    String        @unique
+  customerId     String?
+  customer       Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  guestName      String?
+  guestPhone     String?
+  guestEmail     String?
+  deliveryAddress String?
+  deliveryRegion  String?
+  deliveryFeeInGhs Decimal     @default(0) @db.Decimal(10, 2)
+  subtotalInGhs   Decimal      @db.Decimal(10, 2)
+  discountInGhs   Decimal      @default(0) @db.Decimal(10, 2)
+  totalInGhs      Decimal      @db.Decimal(10, 2)
+  paymentMethod  String        // "WHATSAPP", "PAYSTACK_MOMO", "PAYSTACK_CARD"
+  paymentStatus  PaymentStatus @default(PENDING)
+  paymentRef     String?
+  orderStatus    OrderStatus   @default(PENDING)
+  orderSource    OrderSource   @default(WEBSITE)
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  items          OrderItem[]
+}
+
+model OrderItem {
+  id             String          @id @default(uuid())
+  orderId        String
+  order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variantId      String?
+  variant        ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  productName    String
+  variantSize    String?
+  unitPriceInGhs Decimal         @db.Decimal(10, 2)
+  quantity       Int
+  totalPriceInGhs Decimal        @db.Decimal(10, 2)
+}
+
+model InventoryLog {
+  id            String    @id @default(uuid())
+  productId     String
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  change        Int
+  previousStock Int
+  newStock      Int
+  reason        String    // e.g., "INITIAL_STOCK", "SALE", "RESTOCK", "DAMAGE"
+  adminUserId   String?
+  adminUser     AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+  createdAt     DateTime  @default(now())
+}
+
+model WishlistItem {
+  id         String   @id @default(uuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([customerId, productId])
+}
+
+model Review {
+  id               String   @id @default(uuid())
+  productId        String
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customerId       String?
+  customer         Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  authorName       String
+  rating           Int      // 1 to 5
+  comment          String
+  isVerifiedPurchase Boolean @default(false)
+  isApproved       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+}
+
+model Coupon {
+  id             String    @id @default(uuid())
+  code           String    @unique
+  discountType   String    // "PERCENTAGE" or "FIXED"
+  discountValue  Decimal   @db.Decimal(10, 2)
+  minOrderInGhs  Decimal?  @db.Decimal(10, 2)
+  maxUses        Int?
+  usedCount      Int       @default(0)
+  isActive       Boolean   @default(true)
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+}
+
+model DeliveryRegion {
+  id            String   @id @default(uuid())
+  regionName    String   @unique // e.g. "Greater Accra", "Ashanti", "Central", etc.
+  baseFeeInGhs  Decimal  @db.Decimal(10, 2)
+  estimatedDays String   // e.g. "Same day or 24 hours"
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Enquiry {
+  id          String        @id @default(uuid())
+  name        String
+  phone       String
+  email       String?
+  subject     String?
+  productSlug String?
+  message     String
+  status      EnquiryStatus @default(NEW)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model StoreSettings {
+  id                String      @id @default("default")
+  storeName         String      @default("LIKEM Perfumes")
+  tagline           String      @default("Authentic Fragrances in Ghana")
+  currencyCode      String      @default("GHS")
+  currencySymbol    String      @default("GH₵")
+  phoneContact      String      @default("0502547133")
+  whatsappNumber    String      @default("+233502547133")
+  snapchatHandle    String      @default("lilitracess")
+  instagramHandle   String?
+  tiktokHandle      String?
+  facebookHandle    String?
+  emailContact      String?
+  onlineCheckoutEnabled Boolean @default(false)
+  storeStatus       StoreStatus @default(OPEN)
+  deliveryNotice    String      @default("Delivery fees depend on your exact location. We arrange delivery across Accra, Kumasi and all regions.")
+  customWhatsappTemplate String @default("Hello! I am interested in ordering {product_name} priced at {price}. Please confirm availability and delivery to my location.")
+  updatedAt         DateTime    @updatedAt
+}
+
+model AuditLog {
+  id          String    @id @default(uuid())
+  action      String    // e.g. "PRODUCT_CREATE", "PRICE_UPDATE", "STOCK_CHANGE", "ORDER_STATUS_UPDATE"
+  entity      String    // e.g. "Product", "Order", "Settings"
+  entityId    String?
+  details     String?   // JSON representation or summary
+  adminUserId String?
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+}

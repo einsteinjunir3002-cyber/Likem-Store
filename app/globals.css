@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Montserrat:wght@200;300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-dark: #07080b;
+    --bg-card: #0d0f17;
+    --gold-primary: #d4af37;
+    --gold-light: #f5e4ab;
+    --gold-dark: #9a7b20;
+    --amber-glow: rgba(212, 175, 55, 0.15);
+  }
+}
+
+body {
+  background-color: #07080b;
+  color: #f1f5f9;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212, 175, 55, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 80%, rgba(184, 134, 11, 0.04), transparent);
+  background-attachment: fixed;
+}
+
+/* Haute Parfumerie Serif Typography */
+.font-serif-luxury {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* Subtle Shimmer & Metallic Gold Text Gradient */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fff3cd 0%, #d4af37 50%, #aa820a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-subtle {
+  background: linear-gradient(135deg, #ffffff 0%, #e2d29b 60%, #c49c2d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glassmorphism Luxury Container */
+.glass-luxury {
+  background: rgba(13, 15, 23, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(212, 175, 55, 0.2);
+}
+
+.glass-luxury-card {
+  background: rgba(15, 17, 26, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-luxury-card:hover {
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: 0 15px 35px -5px rgba(212, 175, 55, 0.15), 0 0 20px rgba(212, 175, 55, 0.08);
+  transform: translateY(-4px);
+}
+
+/* Luxury Gold Button Styling */
+.btn-gold-luxury {
+  background: linear-gradient(135deg, #eed88e 0%, #d4af37 50%, #b88d1d 100%);
+  color: #07080b;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gold-luxury:hover {
+  background: linear-gradient(135deg, #f7e6a6 0%, #deb841 50%, #c49624 100%);
+  box-shadow: 0 6px 28px rgba(212, 175, 55, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Custom luxury scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #07080b;
+}
+::-webkit-scrollbar-thumb {
+  background: #242938;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
+}
