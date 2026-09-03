@@ -27,9 +27,10 @@ export default function SignInPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Invalid credentials');
+        throw new Error(data.error || 'Invalid credentials. Please verify and try again.');
       }
 
+      // If owner credentials, silently routes to admin suite
       if (data.role === 'ADMIN') {
         router.push('/admin');
       } else {
@@ -41,6 +42,13 @@ export default function SignInPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleContinueAsGuest = () => {
+    // Set guest browsing session cookie for 30 days
+    document.cookie = 'likem_guest=true; path=/; max-age=2592000; SameSite=Lax';
+    router.push('/');
+    router.refresh();
   };
 
   return (
@@ -80,11 +88,11 @@ export default function SignInPage() {
               <span>The Likem Perfumery</span>
             </div>
 
-            <h1 className="font-serif-luxury text-4xl sm:text-5xl text-white font-light mt-2">
-              Welcome Back
+            <h1 className="font-serif-luxury text-4xl sm:text-5xl text-white font-light mt-2 tracking-wide uppercase">
+              WELCOME
             </h1>
-            <p className="text-xs text-[#64748b] font-light leading-relaxed">
-              Sign in to manage the store as Owner, track orders, or access your saved collection.
+            <p className="text-xs text-[#94a3b8] font-light leading-relaxed max-w-xs mx-auto">
+              Sign in to access your bespoke fragrance vault, track your orders, and enjoy priority allocations.
             </p>
           </div>
 
@@ -106,13 +114,13 @@ export default function SignInPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
               <label className="section-label text-[9px]">
-                Username or Email Address
+                Email or Username
               </label>
               <div className="relative">
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Esq. Likem or your email"
+                  placeholder="Enter your email or username"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   className="w-full input-luxury rounded-2xl px-4 py-3.5 text-xs pl-10"
@@ -174,18 +182,18 @@ export default function SignInPage() {
           {/* Continue as Guest */}
           <button
             type="button"
-            onClick={() => router.push('/products')}
+            onClick={handleContinueAsGuest}
             className="w-full btn-outline-luxury flex items-center justify-center gap-2 py-3 px-6 rounded-full text-[11px]"
           >
             <UserCheck className="w-4 h-4 text-[#d4af37]" />
             <span>Continue Browsing as Guest</span>
           </button>
 
-          {/* Create account link with note about Email OTP verification on signup */}
+          {/* Create account link */}
           <div className="mt-6 text-center text-xs text-[#64748b]">
-            <span>New client? </span>
+            <span>New to The Likem Perfumery? </span>
             <Link href="/register" className="text-[#f5e4ab] font-bold hover:text-[#d4af37] transition-colors">
-              Create an Account with Email OTP Verification
+              Create an Account
             </Link>
           </div>
         </div>

@@ -284,7 +284,7 @@ export default function Navbar({
               { href: '/delivery-faq', label: 'Ghana Delivery & FAQ' },
               { href: '/contact', label: 'Contact Studio' },
               { href: '/cart', label: `Shopping Bag (${totalItems})`, gold: true },
-              { href: '/login', label: 'Sign In / Owner Portal', accent: true },
+              { href: '/login', label: 'Sign In', accent: true },
               { href: '/register', label: 'Create Account' },
             ].map((item) => (
               <Link

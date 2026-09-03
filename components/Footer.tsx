@@ -102,7 +102,6 @@ export default function Footer({
                 { href: '/contact', label: 'Contact Us' },
                 { href: '/login', label: 'Sign In' },
                 { href: '/register', label: 'Create Account' },
-                { href: '/admin/login', label: 'Owner Portal' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
@@ -221,10 +220,6 @@ export default function Footer({
             <span className="text-[#1a202c]">·</span>
             <Link href="/contact" className="hover:text-[#94a3b8] transition-colors">
               Direct Inquiries
-            </Link>
-            <span className="text-[#1a202c]">·</span>
-            <Link href="/admin/login" className="hover:text-[#d4af37] transition-colors">
-              Owner Portal
             </Link>
           </div>
         </div>

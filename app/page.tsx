@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { formatGhs } from '@/lib/currency';
 import {
@@ -35,9 +37,24 @@ const MOSAIC_FALLBACKS = [
 ];
 
 export default async function HomePage() {
-  const settings = await prisma.storeSettings.findUnique({
-    where: { id: 'default' },
-  });
+  const cookieStore = await cookies();
+  const hasAccess =
+    cookieStore.has('likem_admin_token') ||
+    cookieStore.has('likem_customer_token') ||
+    cookieStore.has('likem_guest');
+
+  if (!hasAccess) {
+    redirect('/login');
+  }
+
+  let settings = null;
+  try {
+    settings = await prisma.storeSettings.findUnique({
+      where: { id: 'default' },
+    });
+  } catch (e) {
+    settings = null;
+  }
 
   const allProducts = await prisma.product.findMany({
     include: {
