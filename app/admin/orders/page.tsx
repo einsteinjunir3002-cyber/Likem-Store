@@ -1,44 +1,77 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
-import { formatGhs } from '@/lib/currency';
-import { Plus, MessageCircle, Eye } from 'lucide-react';
+import { Plus, MessageCircle } from 'lucide-react';
+import AdminOrdersTable from '@/components/AdminOrdersTable';
 
 export const revalidate = 0;
 
 export default async function AdminOrdersPage() {
-  const orders = await prisma.order.findMany({
-    include: {
-      items: true,
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+  let orders: any[] = [];
+  try {
+    orders = await prisma.order.findMany({
+      include: {
+        items: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (e) {
+    orders = [];
+  }
+
+  // Convert Prisma Decimals to numbers for Client Component serialization
+  const serializableOrders = orders.map((o) => ({
+    id: o.id,
+    orderNumber: o.orderNumber,
+    guestName: o.guestName,
+    guestPhone: o.guestPhone,
+    guestEmail: o.guestEmail,
+    deliveryAddress: o.deliveryAddress,
+    deliveryRegion: o.deliveryRegion,
+    deliveryFeeInGhs: Number(o.deliveryFeeInGhs || 0),
+    subtotalInGhs: Number(o.subtotalInGhs || 0),
+    totalInGhs: Number(o.totalInGhs || 0),
+    paymentMethod: o.paymentMethod,
+    paymentStatus: o.paymentStatus,
+    orderStatus: o.orderStatus,
+    orderSource: o.orderSource,
+    notes: o.notes,
+    createdAt: o.createdAt.toISOString(),
+    items: (o.items || []).map((it: any) => ({
+      id: it.id,
+      productName: it.productName,
+      unitPriceInGhs: Number(it.unitPriceInGhs || 0),
+      quantity: it.quantity,
+      totalPriceInGhs: Number(it.totalPriceInGhs || 0),
+    })),
+  }));
 
   return (
     <div className="space-y-6 max-w-7xl">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1e2330] pb-4">
         <div>
           <h1 className="text-2xl font-black text-white">Orders & WhatsApp Sales</h1>
           <p className="text-xs text-[#94a3b8]">
-            Manage online orders and log sales confirmed via WhatsApp or social media.
+            Manage client orders, click any delivery status to update (e.g. Delivered), or record new sales.
           </p>
         </div>
         <Link
           href="/admin/orders/new-whatsapp"
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#25D366] text-black font-bold text-xs rounded-xl hover:bg-[#20ba59]"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#25D366] text-black font-bold text-xs rounded-xl hover:bg-[#20ba59] transition-all shadow-md"
         >
           <Plus className="w-4 h-4" />
           <span>Record WhatsApp Sale</span>
         </Link>
       </div>
 
-      {orders.length === 0 ? (
+      {serializableOrders.length === 0 ? (
         <div className="bg-[#151821] border border-[#262b3d] rounded-2xl p-12 text-center space-y-3">
           <div className="w-12 h-12 rounded-full bg-[#1e2330] flex items-center justify-center text-[#94a3b8] mx-auto">
             <MessageCircle className="w-6 h-6" />
           </div>
           <h3 className="text-base font-bold text-white">No Orders Recorded Yet</h3>
           <p className="text-xs text-[#94a3b8] max-w-md mx-auto">
-            Orders placed via the website or manual WhatsApp entries will appear here with full customer details and delivery status.
+            Orders placed via the website or manual WhatsApp entries will appear here with full customer details and real-time delivery status controls.
           </p>
           <div className="pt-2">
             <Link
@@ -50,51 +83,7 @@ export default async function AdminOrdersPage() {
           </div>
         </div>
       ) : (
-        <div className="bg-[#151821] border border-[#262b3d] rounded-2xl overflow-hidden">
-          <table className="w-full text-left text-xs sm:text-sm">
-            <thead className="bg-[#0d0e12] text-[#94a3b8] uppercase text-[11px] font-bold border-b border-[#262b3d]">
-              <tr>
-                <th className="p-3 sm:p-4">Order Ref</th>
-                <th className="p-3 sm:p-4">Customer</th>
-                <th className="p-3 sm:p-4">Source</th>
-                <th className="p-3 sm:p-4">Total (GHS)</th>
-                <th className="p-3 sm:p-4">Status</th>
-                <th className="p-3 sm:p-4">Date</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#1e2330]">
-              {orders.map((o) => (
-                <tr key={o.id} className="hover:bg-[#1a1f2e] transition-colors">
-                  <td className="p-3 sm:p-4 font-mono font-bold text-[#d4af37]">{o.orderNumber}</td>
-                  <td className="p-3 sm:p-4">
-                    <div className="font-semibold text-white">{o.guestName || 'Anonymous Customer'}</div>
-                    <div className="text-[11px] text-[#94a3b8]">{o.guestPhone}</div>
-                  </td>
-                  <td className="p-3 sm:p-4">
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                        o.orderSource === 'WHATSAPP'
-                          ? 'bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/30'
-                          : 'bg-[#38bdf8]/10 text-[#38bdf8] border border-[#38bdf8]/30'
-                      }`}
-                    >
-                      {o.orderSource}
-                    </span>
-                  </td>
-                  <td className="p-3 sm:p-4 font-black text-white">{formatGhs(o.totalInGhs)}</td>
-                  <td className="p-3 sm:p-4">
-                    <span className="px-2 py-0.5 rounded bg-[#1e2330] text-[#cbd5e1] text-[10px] font-bold uppercase">
-                      {o.orderStatus}
-                    </span>
-                  </td>
-                  <td className="p-3 sm:p-4 text-xs text-[#94a3b8]">
-                    {new Date(o.createdAt).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminOrdersTable initialOrders={serializableOrders} />
       )}
     </div>
   );
