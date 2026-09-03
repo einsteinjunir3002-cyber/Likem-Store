@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Menu, X, Search, Sparkles, User, ChevronDown } from 'lucide-react';
+import { ShoppingBag, Menu, X, Search, Sparkles, User, ChevronDown, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { WhatsAppIcon, SnapchatIcon } from '@/components/SocialIcons';
+import { getWishlist, WISHLIST_EVENT } from '@/components/WishlistButton';
 
 interface NavbarProps {
   storeName?: string;
@@ -18,14 +19,23 @@ export default function Navbar({
   snapchatHandle = 'lilitracess',
 }: NavbarProps) {
   const { totalItems } = useCart();
+  const [wishlistCount, setWishlistCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    setWishlistCount(getWishlist().length);
+    const onWishlistUpdate = () => setWishlistCount(getWishlist().length);
+    window.addEventListener(WISHLIST_EVENT, onWishlistUpdate);
+
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+
+    return () => {
+      window.removeEventListener(WISHLIST_EVENT, onWishlistUpdate);
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -163,6 +173,23 @@ export default function Navbar({
               <span>WhatsApp</span>
             </a>
 
+            {/* Wishlist Heart */}
+            <Link
+              href="/wishlist"
+              className="relative p-2.5 text-[#94a3b8] hover:text-red-400 transition-colors duration-300 group"
+              aria-label="Saved Wishlist"
+              title="My Wishlist"
+            >
+              <Heart className={`w-5 h-5 transition-transform duration-300 group-hover:scale-110 ${wishlistCount > 0 ? 'fill-red-500/30 text-red-400' : ''}`} />
+              {wishlistCount > 0 && (
+                <span
+                  className="absolute -top-0.5 -right-0.5 text-white text-[9px] font-black rounded-full h-4 w-4 flex items-center justify-center shadow-lg bg-red-500"
+                >
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
             {/* Cart */}
             <Link
               href="/cart"
@@ -182,7 +209,19 @@ export default function Navbar({
           </div>
 
           {/* ── Mobile Action Icons ── */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex md:hidden items-center gap-1.5">
+            <Link
+              href="/wishlist"
+              className="relative p-2 text-[#94a3b8] hover:text-red-400"
+              aria-label="Wishlist"
+            >
+              <Heart className={`w-5 h-5 ${wishlistCount > 0 ? 'fill-red-500/30 text-red-400' : ''}`} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[8px] font-bold rounded-full h-3.5 w-3.5 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
             <Link
               href="/login"
               className="p-2 text-[#94a3b8] hover:text-[#d4af37]"
@@ -241,9 +280,10 @@ export default function Navbar({
           <nav className="flex flex-col space-y-1">
             {[
               { href: '/products', label: 'The Perfume Collection' },
+              { href: '/wishlist', label: `My Wishlist (${wishlistCount})`, love: true },
               { href: '/delivery-faq', label: 'Ghana Delivery & FAQ' },
               { href: '/contact', label: 'Contact Studio' },
-              { href: '/cart', label: `Shopping Cart (${totalItems})`, gold: true },
+              { href: '/cart', label: `Shopping Bag (${totalItems})`, gold: true },
               { href: '/login', label: 'Sign In / Owner Portal', accent: true },
               { href: '/register', label: 'Create Account' },
             ].map((item) => (
@@ -252,7 +292,7 @@ export default function Navbar({
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`font-serif-luxury text-lg py-3 border-b border-[#0e111a] flex items-center justify-between transition-colors ${
-                  item.gold ? 'text-[#d4af37]' : item.accent ? 'text-[#f5e4ab]' : 'text-[#cbd5e1] hover:text-white'
+                  (item as any).love ? 'text-red-400 font-semibold' : item.gold ? 'text-[#d4af37]' : item.accent ? 'text-[#f5e4ab]' : 'text-[#cbd5e1] hover:text-white'
                 }`}
               >
                 <span>{item.label}</span>

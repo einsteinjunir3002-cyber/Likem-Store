@@ -13,6 +13,7 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { WhatsAppIcon, SnapchatIcon } from '@/components/SocialIcons';
+import WishlistButton from '@/components/WishlistButton';
 
 export const revalidate = 0;
 
@@ -292,47 +293,53 @@ export default async function HomePage() {
                 className="glass-luxury-card perfume-card-shine rounded-xl sm:rounded-2xl
                            overflow-hidden flex flex-col group"
               >
-                {/* Image */}
-                <Link
-                  href={`/products/${p.slug}`}
-                  className="relative overflow-hidden bg-[#080a10] block"
-                  style={{ aspectRatio: '4/5' }}
-                >
-                  <img
-                    src={primaryImage}
-                    alt={p.name}
-                    className="w-full h-full object-cover group-hover:scale-110
-                               transition-transform duration-700 ease-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/80
-                                  via-transparent to-transparent opacity-60
-                                  group-hover:opacity-30 transition-opacity duration-500" />
+                {/* Image & Wishlist Button */}
+                <div className="relative overflow-hidden bg-[#080a10] block" style={{ aspectRatio: '4/5' }}>
+                  <Link href={`/products/${p.slug}`} className="block w-full h-full">
+                    <img
+                      src={primaryImage}
+                      alt={p.name}
+                      className="w-full h-full object-cover group-hover:scale-110
+                                 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/80
+                                    via-transparent to-transparent opacity-60
+                                    group-hover:opacity-30 transition-opacity duration-500" />
+                  </Link>
 
                   {/* Brand badge */}
                   <span className="absolute top-2 left-2 sm:top-3 sm:left-3 badge-gold
-                                   text-[7px] sm:text-[8px] px-2 sm:px-3 py-0.5">
+                                   text-[7px] sm:text-[8px] px-2 sm:px-3 py-0.5 pointer-events-none z-10">
                     {p.brand?.name || 'Exclusive'}
                   </span>
 
+                  {/* Jumia-style Love / Wishlist Heart Button */}
+                  <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20">
+                    <WishlistButton productId={p.id} productName={p.name} />
+                  </div>
+
                   {!isPublished && (
-                    <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-[7px]
+                    <span className="absolute bottom-2 right-2 text-[7px]
                                      sm:text-[8px] uppercase font-bold tracking-wide px-2 py-0.5
                                      rounded-full bg-[#d4af37]/15 text-[#f5e4ab]
-                                     border border-[#d4af37]/25 backdrop-blur-sm">
+                                     border border-[#d4af37]/25 backdrop-blur-sm z-10">
                       Soon
                     </span>
                   )}
 
                   {/* Quick view on hover (desktop only) */}
-                  <div className="hidden sm:flex absolute inset-0 items-center justify-center
-                                  opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Link
+                    href={`/products/${p.slug}`}
+                    className="hidden sm:flex absolute inset-0 items-center justify-center
+                               opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  >
                     <span className="bg-[#050508]/80 backdrop-blur-sm text-[#f5e4ab]
                                      text-[10px] uppercase tracking-[0.2em] font-bold
                                      px-4 py-2 rounded-full border border-[#d4af37]/30">
                       View Details
                     </span>
-                  </div>
-                </Link>
+                  </Link>
+                </div>
 
                 {/* Info */}
                 <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">

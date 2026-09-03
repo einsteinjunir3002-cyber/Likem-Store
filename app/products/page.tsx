@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { formatGhs } from '@/lib/currency';
 import { Filter } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/SocialIcons';
+import WishlistButton from '@/components/WishlistButton';
 
 export const revalidate = 0;
 
@@ -102,36 +103,42 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               key={p.id}
               className="glass-luxury-card rounded-xl sm:rounded-2xl overflow-hidden flex flex-col group"
             >
-              {/* Image */}
-              <Link
-                href={`/products/${p.slug}`}
-                className="relative overflow-hidden bg-[#080a10] block"
-                style={{ aspectRatio: '4/5' }}
-              >
-                <img
-                  src={primaryImage}
-                  alt={p.name}
-                  className="w-full h-full object-cover group-hover:scale-110
-                             transition-transform duration-700 ease-out"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/80 via-transparent
-                                to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
+              {/* Image & Wishlist Button */}
+              <div className="relative overflow-hidden bg-[#080a10] block" style={{ aspectRatio: '4/5' }}>
+                <Link
+                  href={`/products/${p.slug}`}
+                  className="block w-full h-full"
+                >
+                  <img
+                    src={primaryImage}
+                    alt={p.name}
+                    className="w-full h-full object-cover group-hover:scale-110
+                               transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/80 via-transparent
+                                  to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
+                </Link>
 
                 <span className="absolute top-2 left-2 sm:top-3 sm:left-3 text-[7px] sm:text-[9px]
                                  uppercase font-bold tracking-wide px-2 sm:px-3 py-0.5 sm:py-1
                                  rounded-full bg-[#080a10]/80 text-[#d4af37]
-                                 border border-[#d4af37]/35 backdrop-blur-md">
+                                 border border-[#d4af37]/35 backdrop-blur-md pointer-events-none z-10">
                   {p.brand?.name || 'Exclusive'}
                 </span>
 
+                {/* Jumia-style Love / Wishlist Heart Button */}
+                <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20">
+                  <WishlistButton productId={p.id} productName={p.name} />
+                </div>
+
                 {!isPublished && (
-                  <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-[7px] sm:text-[8px]
+                  <span className="absolute bottom-2 right-2 text-[7px] sm:text-[8px]
                                    uppercase font-bold tracking-wide px-1.5 sm:px-2.5 py-0.5 rounded-full
-                                   bg-[#d4af37]/20 text-[#f5e4ab] border border-[#d4af37]/30">
+                                   bg-[#d4af37]/20 text-[#f5e4ab] border border-[#d4af37]/30 z-10">
                     Soon
                   </span>
                 )}
-              </Link>
+              </div>
 
               {/* Info */}
               <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between space-y-2 sm:space-y-4">

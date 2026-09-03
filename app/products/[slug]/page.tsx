@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { formatGhs } from '@/lib/currency';
 import ProductClientActions from '@/components/ProductClientActions';
 import { Truck, ShieldCheck, ArrowLeft, Droplet, Sparkles, Wind, Clock } from 'lucide-react';
+import WishlistButton from '@/components/WishlistButton';
 
 export const revalidate = 0;
 
@@ -90,8 +91,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 alt={product.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
+              <div className="absolute top-4 right-4 z-20">
+                <WishlistButton productId={product.id} productName={product.name} className="w-10 h-10" />
+              </div>
               {product.status === 'DRAFT' && (
-                <div className="absolute top-4 right-4 bg-amber-500/90 text-black font-black text-xs px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                <div className="absolute top-4 left-4 bg-amber-500/90 text-black font-black text-xs px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
                   Preview Mode (Draft)
                 </div>
               )}
