@@ -40,9 +40,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = await prisma.storeSettings.findUnique({
-    where: { id: 'default' },
-  });
+  let settings = null;
+  try {
+    settings = await prisma.storeSettings.findUnique({
+      where: { id: 'default' },
+    });
+  } catch (e) {
+    // Graceful fallback during static build / momentary DB timeout
+    settings = null;
+  }
 
   return (
     <html lang="en">
