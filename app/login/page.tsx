@@ -52,24 +52,24 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center px-4 py-16 relative overflow-hidden">
+    <div className="min-h-[85vh] flex items-center justify-center px-3 sm:px-4 py-8 sm:py-16 relative overflow-hidden w-full max-w-full">
       {/* Background ambience */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-80"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[500px] h-64 sm:h-80"
           style={{ background: 'radial-gradient(ellipse at top, rgba(212,175,55,0.07) 0%, transparent 70%)' }}
         />
         <div
-          className="absolute bottom-0 right-0 w-72 h-72"
+          className="absolute bottom-0 right-0 w-48 sm:w-72 h-48 sm:h-72"
           style={{ background: 'radial-gradient(ellipse at right bottom, rgba(212,175,55,0.05) 0%, transparent 60%)' }}
         />
       </div>
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full max-w-[420px] relative z-10 mx-auto">
         {/* Card */}
-        <div className="glass-luxury rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden">
+        <div className="glass-luxury rounded-3xl p-5 sm:p-10 shadow-2xl relative overflow-hidden">
           {/* Card top glow line */}
-          <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent" />
+          <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent" />
 
           {/* Header */}
           <div className="text-center space-y-3 mb-8">
@@ -123,7 +123,7 @@ export default function SignInPage() {
                   placeholder="Enter your email or username"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full input-luxury rounded-2xl px-4 py-3.5 text-xs pl-10"
+                  className="w-full input-luxury rounded-2xl px-4 py-3.5 text-base sm:text-xs pl-10"
                 />
                 <User className="w-4 h-4 text-[#d4af37] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
@@ -140,7 +140,7 @@ export default function SignInPage() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full input-luxury rounded-2xl px-4 py-3.5 pr-12 text-xs"
+                  className="w-full input-luxury rounded-2xl px-4 py-3.5 pr-12 text-base sm:text-xs"
                 />
                 <button
                   type="button"

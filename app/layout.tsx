@@ -25,13 +25,14 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-// Correct viewport export — prevents iOS from zooming on input fields
+// Strict mobile viewport export — guarantees 1:1 pixel-perfect fit on all devices
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 5, // Allow pinch-to-zoom for accessibility
-  userScalable: true,
-  themeColor: '#d4af37',
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#050508',
   colorScheme: 'dark',
 };
 

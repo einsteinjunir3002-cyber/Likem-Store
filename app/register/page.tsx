@@ -135,23 +135,23 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-16 relative overflow-hidden">
+    <div className="min-h-[85vh] flex items-center justify-center px-3 sm:px-4 py-8 sm:py-16 relative overflow-hidden w-full max-w-full">
       {/* Background ambience */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-80"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[500px] h-64 sm:h-80"
           style={{ background: 'radial-gradient(ellipse at top, rgba(212,175,55,0.07) 0%, transparent 70%)' }}
         />
         <div
-          className="absolute bottom-0 right-0 w-72 h-72"
+          className="absolute bottom-0 right-0 w-48 sm:w-72 h-48 sm:h-72"
           style={{ background: 'radial-gradient(ellipse at right bottom, rgba(212,175,55,0.05) 0%, transparent 60%)' }}
         />
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        <div className="glass-luxury rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+      <div className="w-full max-w-[420px] relative z-10 mx-auto">
+        <div className="glass-luxury rounded-3xl p-5 sm:p-10 shadow-2xl relative overflow-hidden">
           {/* Card top glow line */}
-          <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent" />
+          <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent" />
 
           {/* Header */}
           <div className="text-center space-y-2 mb-6">
