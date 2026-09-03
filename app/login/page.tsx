@@ -77,7 +77,7 @@ export default function SignInPage() {
 
             <div className="badge-gold mx-auto w-fit">
               <Sparkles className="w-2.5 h-2.5" />
-              <span>LIKEM Haute Parfumerie</span>
+              <span>The Likem Perfumery</span>
             </div>
 
             <h1 className="font-serif-luxury text-4xl sm:text-5xl text-white font-light mt-2">

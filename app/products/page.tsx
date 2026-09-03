@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { formatGhs } from '@/lib/currency';
-import { MessageCircle, Filter } from 'lucide-react';
+import { Filter } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/SocialIcons';
 
 export const revalidate = 0;
 
@@ -33,6 +34,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     orderBy: [{ status: 'desc' }, { createdAt: 'desc' }],
   });
 
+  const storeName = settings?.storeName || 'The Likem Perfumery';
   const whatsappNumber = (settings?.whatsappNumber || '233502547133').replace(/[^0-9]/g, '');
 
   return (
@@ -41,7 +43,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       {/* ── Page Header ── */}
       <div className="text-center space-y-2 sm:space-y-3 max-w-2xl mx-auto px-2">
         <span className="section-label">
-          The Full Gallery · All {products.length} Fragrances
+          The Full Gallery · Authentic Fragrances
         </span>
         <h1 className="font-serif-luxury font-normal text-white"
           style={{ fontSize: 'clamp(1.75rem, 6vw, 3.25rem)' }}>
@@ -63,7 +65,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </span>
 
           {[
-            { label: `All (${products.length})`, href: '/products', active: !params.gender && !params.brand },
+            { label: 'All Fragrances', href: '/products', active: !params.gender && !params.brand },
             { label: 'Femme', href: '/products?gender=Women', active: params.gender === 'Women' },
             { label: 'Homme', href: '/products?gender=Men', active: params.gender === 'Men' },
             { label: 'Unisex', href: '/products?gender=Unisex', active: params.gender === 'Unisex' },
@@ -84,7 +86,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           ))}
 
           <div className="ml-auto text-[9px] sm:text-[10px] text-[#94a3b8] tracking-wider uppercase">
-            <span className="text-[#f5e4ab] font-bold">{products.length}</span> perfumes
+            Curated Originals
           </div>
         </div>
       </div>
@@ -171,8 +173,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     <a
                       href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                         isPublished
-                          ? `Hello! I would like to order ${p.name} priced at ${formatGhs(p.priceInGhs)}. Please confirm availability for delivery.`
-                          : `Hello! I would like to inquire about ${p.name} from your website.`
+                          ? `Hello! I would like to order ${p.name} from ${storeName} priced at ${formatGhs(p.priceInGhs)}. Please confirm availability for delivery.`
+                          : `Hello! I would like to inquire about ${p.name} from ${storeName}.`
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -181,7 +183,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                                  text-[9px] sm:text-xs font-bold rounded-lg sm:rounded-xl
                                  border border-[#25D366]/35 transition-colors"
                     >
-                      <MessageCircle className="w-3 h-3 flex-shrink-0" />
+                      <WhatsAppIcon className="w-3.5 h-3.5 flex-shrink-0" />
                       <span>{isPublished ? 'Order' : 'Ask'}</span>
                     </a>
                   </div>

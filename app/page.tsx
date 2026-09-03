@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { formatGhs } from '@/lib/currency';
 import {
-  MessageCircle,
   ShoppingBag,
   Sparkles,
   ArrowRight,
@@ -11,7 +10,9 @@ import {
   Truck,
   Shield,
   Phone,
+  MessageSquare,
 } from 'lucide-react';
+import { WhatsAppIcon, SnapchatIcon } from '@/components/SocialIcons';
 
 export const revalidate = 0;
 
@@ -48,13 +49,16 @@ export default async function HomePage() {
     orderBy: [{ status: 'desc' }, { createdAt: 'desc' }],
   });
 
+  const storeName = settings?.storeName || 'The Likem Perfumery';
   const whatsappNumber = (settings?.whatsappNumber || '233502547133').replace(/[^0-9]/g, '');
+  const phoneContact = settings?.phoneContact || '0502547133';
+  const snapchatHandle = settings?.snapchatHandle || 'lilitracess';
 
   return (
     <div className="overflow-x-hidden">
 
       {/* ==================================================================
-          HERO — Mobile-first layout, stacks on small screens
+          HERO — Mobile-first grand entrance
           ================================================================== */}
       <section className="relative flex items-center justify-center overflow-hidden"
         style={{ minHeight: 'min(100svh, 900px)' }}>
@@ -79,8 +83,8 @@ export default async function HomePage() {
               {/* Eyebrow badge */}
               <div className="inline-flex items-center gap-2 badge-gold animate-fadeIn">
                 <Sparkles className="w-3 h-3 text-[#d4af37] flex-shrink-0" />
-                <span className="hidden sm:inline">Haute Parfumerie · Ghanaian Online Boutique</span>
-                <span className="sm:hidden">Haute Parfumerie · Ghana</span>
+                <span className="hidden sm:inline">Haute Parfumerie · {storeName}</span>
+                <span className="sm:hidden">{storeName}</span>
                 <Sparkles className="w-3 h-3 text-[#d4af37] flex-shrink-0" />
               </div>
 
@@ -101,7 +105,7 @@ export default async function HomePage() {
                 </p>
               </div>
 
-              {/* CTA Buttons */}
+              {/* CTA Buttons — generalized without hardcoded count */}
               <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 justify-center lg:justify-start
                               animate-fadeInUp"
                 style={{ animationDelay: '0.2s' }}>
@@ -111,21 +115,21 @@ export default async function HomePage() {
                              px-6 sm:px-9 py-3.5 sm:py-4 rounded-full text-[11px] w-full xs:w-auto"
                 >
                   <ShoppingBag className="w-4 h-4 stroke-2 flex-shrink-0" />
-                  <span>Explore {allProducts.length} Fragrances</span>
+                  <span>Explore Fragrances</span>
                   <ArrowRight className="w-3.5 h-3.5 stroke-[2.5] flex-shrink-0" />
                 </Link>
 
                 <a
                   href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-                    'Hello! I am admiring your perfume collection and would like to place an order.'
+                    `Hello! I am admiring your fragrance collection on ${storeName} and would like to place an order.`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-outline-luxury inline-flex items-center justify-center gap-2.5
                              px-6 sm:px-9 py-3.5 sm:py-4 rounded-full text-[11px] w-full xs:w-auto"
                 >
-                  <MessageCircle className="w-4 h-4 text-[#25D366] flex-shrink-0" />
-                  <span>Order via WhatsApp</span>
+                  <WhatsAppIcon className="w-4 h-4 text-[#25D366] flex-shrink-0" />
+                  <span>Connect on WhatsApp</span>
                 </a>
               </div>
 
@@ -134,7 +138,7 @@ export default async function HomePage() {
                 <div className="gold-divider mb-5 sm:mb-8" />
                 <div className="grid grid-cols-3 gap-3 sm:gap-6 text-center lg:text-left">
                   {[
-                    { value: `${allProducts.length}+`, label: 'Fragrances' },
+                    { value: 'Curated', label: 'Originals' },
                     { value: 'GH₵', label: 'Direct Pricing' },
                     { value: '24h', label: 'Nationwide' },
                   ].map((stat) => (
@@ -269,8 +273,8 @@ export default async function HomePage() {
             <span className="gold-gradient-text italic">Collection</span>
           </h2>
           <p className="text-xs sm:text-sm text-[#64748b] font-light leading-relaxed max-w-lg mx-auto">
-            Every photograph is taken of our actual stock in Ghana. Browse and order directly
-            via WhatsApp or our online checkout.
+            Every photograph is taken of our actual stock in Ghana. Browse our authentic
+            original fragrances — all available for immediate WhatsApp order or online checkout.
           </p>
         </div>
 
@@ -377,8 +381,8 @@ export default async function HomePage() {
                       <a
                         href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                           isPublished
-                            ? `Hello! I would like to order *${p.name}* priced at ${formatGhs(p.priceInGhs)}. Please confirm availability and delivery.`
-                            : `Hello! I would like to inquire about *${p.name}*. Please share price and availability.`
+                            ? `Hello! I would like to order *${p.name}* from ${storeName} priced at ${formatGhs(p.priceInGhs)}. Please confirm availability and delivery.`
+                            : `Hello! I would like to inquire about *${p.name}* on ${storeName}. Please share price and availability.`
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -388,7 +392,7 @@ export default async function HomePage() {
                                    rounded-lg sm:rounded-xl border border-[#25D366]/25
                                    hover:border-[#25D366]/50 transition-all"
                       >
-                        <MessageCircle className="w-3 h-3 flex-shrink-0" />
+                        <WhatsAppIcon className="w-3 h-3 flex-shrink-0" />
                         <span>{isPublished ? 'Order' : 'Ask'}</span>
                       </a>
                     </div>
@@ -399,7 +403,7 @@ export default async function HomePage() {
           })}
         </div>
 
-        {/* View all CTA */}
+        {/* View all CTA — generalized without hardcoded count */}
         <div className="text-center pt-2">
           <Link
             href="/products"
@@ -407,7 +411,7 @@ export default async function HomePage() {
                        px-7 sm:px-10 py-3.5 sm:py-4 rounded-full text-[11px]"
           >
             <Layers className="w-4 h-4 flex-shrink-0" />
-            <span>View Complete Collection ({allProducts.length} Fragrances)</span>
+            <span>View Complete Collection</span>
             <ArrowRight className="w-3.5 h-3.5 stroke-[2.5] flex-shrink-0" />
           </Link>
         </div>
@@ -449,8 +453,8 @@ export default async function HomePage() {
               {
                 roman: 'II',
                 color: '#25D366',
-                title: 'WhatsApp Concierge',
-                desc: 'Tap any perfume to open a pre-addressed WhatsApp dialog. Confirm scent notes, batch details, and delivery timing directly with our curator.',
+                title: 'WhatsApp & Snapchat Concierge',
+                desc: 'Connect directly via WhatsApp or Snapchat to confirm scent notes, batch details, and delivery timing with our curator.',
               },
               {
                 roman: 'III',
@@ -552,7 +556,7 @@ export default async function HomePage() {
       </section>
 
       {/* ==================================================================
-          COMMUNITY / CONTACT CTA
+          SOCIAL MEDIA & DIRECT COMMUNICATION CTA
           ================================================================== */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-16 sm:pb-24">
         <div className="glass-luxury rounded-2xl sm:rounded-3xl p-8 sm:p-14 lg:p-20
@@ -561,66 +565,87 @@ export default async function HomePage() {
             style={{ background: 'radial-gradient(ellipse at center, rgba(212,175,55,0.06) 0%, transparent 70%)' }}
           />
 
-          <div className="relative z-10 space-y-6 sm:space-y-8 max-w-lg mx-auto">
+          <div className="relative z-10 space-y-6 sm:space-y-8 max-w-xl mx-auto">
             <div className="ornament-line">
-              <div className="section-label">Join Our Fragrance Circle</div>
+              <div className="section-label">Follow Our Social Media Handles</div>
             </div>
             <h2 className="font-serif-luxury text-white font-light leading-tight"
-              style={{ fontSize: 'clamp(1.75rem, 7vw, 3.75rem)' }}>
-              Follow Our{' '}
-              <span className="gold-gradient-text italic">WhatsApp Status</span>
+              style={{ fontSize: 'clamp(1.75rem, 7vw, 3.5rem)' }}>
+              WhatsApp · Snapchat · <span className="gold-gradient-text italic">SMS or Call</span>
             </h2>
-            <p className="text-xs sm:text-sm text-[#64748b] font-light leading-relaxed">
-              Be the first to see unboxing drops, new Arabian and French arrivals,
-              and limited holiday gift collections curated for our community.
+            <p className="text-xs sm:text-sm text-[#94a3b8] font-light leading-relaxed">
+              Follow our social media handles on WhatsApp and Snapchat, or send an SMS or Call via{' '}
+              <span className="text-[#f5e4ab] font-medium">{phoneContact}</span>. We trade actively
+              on both Snapchat and WhatsApp with prompt door-to-door courier dispatch across Ghana.
             </p>
 
-            <div className="flex flex-col gap-3 sm:gap-4 pt-2">
+            {/* Social & Contact Buttons with official icons */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-2">
+
+              {/* 1. Official WhatsApp */}
               <a
                 href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-                  'Hello! I would like to connect and see your latest fragrances.'
+                  `Hello! I am contacting ${storeName} to view your fragrances and place an order.`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-3
-                           px-7 py-4 rounded-full font-extrabold text-[11px] uppercase
-                           tracking-wider transition-all"
+                className="w-full inline-flex items-center justify-center gap-2.5
+                           px-6 py-4 rounded-2xl font-extrabold text-[11px] uppercase
+                           tracking-wider transition-all shadow-lg hover:brightness-110"
                 style={{
                   background: '#25D366',
                   color: '#000',
-                  boxShadow: '0 8px 32px rgba(37, 211, 102, 0.25)',
+                  boxShadow: '0 8px 24px rgba(37, 211, 102, 0.25)',
                 }}
               >
-                <MessageCircle className="w-4 h-4 fill-black flex-shrink-0" />
+                <WhatsAppIcon className="w-5 h-5 flex-shrink-0" />
                 <span>Connect on WhatsApp</span>
               </a>
 
-              <a
-                href={`tel:${settings?.phoneContact || '0502547133'}`}
-                className="w-full inline-flex items-center justify-center gap-3
-                           px-7 py-3.5 rounded-full font-bold text-[11px] uppercase
-                           tracking-wider transition-all btn-outline-luxury"
-              >
-                <Phone className="w-4 h-4 text-[#d4af37] flex-shrink-0" />
-                <span>Call: {settings?.phoneContact || '0502547133'}</span>
-              </a>
-
-              {settings?.snapchatHandle && (
+              {/* 2. Official Snapchat */}
+              {snapchatHandle && (
                 <a
-                  href={`https://snapchat.com/add/${settings.snapchatHandle}`}
+                  href={`https://snapchat.com/add/${snapchatHandle}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5
-                             rounded-full font-bold text-[11px] uppercase tracking-wider"
+                  className="w-full inline-flex items-center justify-center gap-2.5
+                             px-6 py-4 rounded-2xl font-extrabold text-[11px] uppercase
+                             tracking-wider transition-all shadow-lg hover:brightness-105"
                   style={{
-                    background: 'rgba(255, 252, 0, 0.10)',
-                    border: '1px solid rgba(255, 252, 0, 0.30)',
-                    color: '#FFFC00',
+                    background: '#FFFC00',
+                    color: '#000',
+                    boxShadow: '0 8px 24px rgba(255, 252, 0, 0.20)',
                   }}
                 >
-                  <span>📸 Snapchat: @{settings.snapchatHandle}</span>
+                  <SnapchatIcon className="w-5 h-5 flex-shrink-0" />
+                  <span>Connect on Snapchat</span>
                 </a>
               )}
+
+              {/* 3. Call Via Phone */}
+              <a
+                href={`tel:${phoneContact}`}
+                className="w-full inline-flex items-center justify-center gap-2.5
+                           px-6 py-3.5 rounded-2xl font-bold text-[11px] uppercase
+                           tracking-wider transition-all btn-outline-luxury hover:text-[#d4af37]"
+              >
+                <Phone className="w-4 h-4 text-[#d4af37] flex-shrink-0" />
+                <span>Call: {phoneContact}</span>
+              </a>
+
+              {/* 4. Send SMS */}
+              <a
+                href={`sms:${phoneContact}?body=${encodeURIComponent(
+                  `Hello! I would like to inquire about fragrances at ${storeName}.`
+                )}`}
+                className="w-full inline-flex items-center justify-center gap-2.5
+                           px-6 py-3.5 rounded-2xl font-bold text-[11px] uppercase
+                           tracking-wider transition-all btn-outline-luxury hover:text-[#f5e4ab]"
+              >
+                <MessageSquare className="w-4 h-4 text-[#f5e4ab] flex-shrink-0" />
+                <span>Send SMS: {phoneContact}</span>
+              </a>
+
             </div>
           </div>
         </div>

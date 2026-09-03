@@ -154,7 +154,7 @@ export default function ProductClientActions({
           <span className="text-[10px] uppercase tracking-wider">Share perfume:</span>
           <a
             href={`https://wa.me/?text=${encodeURIComponent(
-              `Check out ${product.name} on LIKEM Fragrances: ${
+              `Check out ${product.name} on The Likem Perfumery: ${
                 typeof window !== 'undefined' ? window.location.href : ''
               }`
             )}`}

@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, MessageCircle, Menu, X, Search, Sparkles, User, ChevronDown } from 'lucide-react';
+import { ShoppingBag, Menu, X, Search, Sparkles, User, ChevronDown } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { WhatsAppIcon, SnapchatIcon } from '@/components/SocialIcons';
 
 interface NavbarProps {
   storeName?: string;
@@ -12,7 +13,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({
-  storeName = 'LIKEM Fragrances',
+  storeName = 'The Likem Perfumery',
   whatsappNumber = '233502547133',
   snapchatHandle = 'lilitracess',
 }: NavbarProps) {
@@ -60,7 +61,7 @@ export default function Navbar({
             <span className="text-[#64748b] mx-1.5">·</span>
             <span>Handpicked Originals Delivered Across Ghana</span>
           </span>
-          <span className="sm:hidden text-shimmer font-bold">Luxury Fragrances · Ghana</span>
+          <span className="sm:hidden text-shimmer font-bold">The Likem Perfumery · Ghana</span>
           <Sparkles className="w-2.5 h-2.5 text-[#d4af37] flex-shrink-0" />
         </span>
       </div>
@@ -73,7 +74,7 @@ export default function Navbar({
             <span className="font-serif-luxury tracking-[0.12em] sm:tracking-[0.16em] text-white
                              font-medium uppercase transition-colors group-hover:text-[#f5e4ab]
                              flex items-center gap-1.5 sm:gap-2.5 leading-none"
-              style={{ fontSize: 'clamp(1.1rem, 4vw, 1.5rem)' }}>
+              style={{ fontSize: 'clamp(1.05rem, 3.5vw, 1.45rem)' }}>
               <span
                 className="text-[#d4af37] transition-transform group-hover:rotate-45 duration-500
                            flex-shrink-0"
@@ -85,28 +86,26 @@ export default function Navbar({
             </span>
             <span className="text-[7px] sm:text-[8px] tracking-[0.35em] sm:tracking-[0.42em]
                              text-[#d4af37]/70 uppercase font-semibold pl-5 sm:pl-7 -mt-0.5">
-              Parfums · Accra
+              Parfums · Accra · Ghana
             </span>
           </Link>
 
-          {/* ── Desktop Search ── */}
+          {/* ── Search Bar (Desktop) ── */}
           <form
             onSubmit={handleSearch}
-            className="hidden md:flex items-center flex-1 max-w-sm mx-8 relative"
+            className="hidden lg:flex items-center flex-1 max-w-xs mx-8"
           >
             <div className="relative w-full">
               <input
                 type="text"
-                placeholder="Search fragrances, brands..."
+                placeholder="Search scents, brands, notes..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full input-luxury rounded-full py-2.5 pl-5 pr-11 text-xs tracking-wide placeholder:text-[#475569]"
-                style={{ fontSize: '12px' }}
+                className="w-full input-luxury rounded-full py-2 pl-4 pr-10 text-xs"
               />
               <button
                 type="submit"
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#d4af37] hover:text-[#f5e4ab] transition-colors"
-                aria-label="Search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#475569] hover:text-[#d4af37] transition-colors"
               >
                 <Search className="w-3.5 h-3.5" />
               </button>
@@ -146,21 +145,21 @@ export default function Navbar({
               <span>Sign In</span>
             </Link>
 
-            {/* WhatsApp CTA */}
+            {/* Official WhatsApp CTA */}
             <a
               href={`https://wa.me/${waNum}?text=${encodeURIComponent(
-                'Hello! I am viewing your luxury perfume collection and would like to place an order.'
+                `Hello! I am viewing your fragrance collection on ${storeName} and would like to place an order.`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold tracking-wider transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold tracking-wider transition-all hover:brightness-110"
               style={{
-                background: 'rgba(37,211,102,0.10)',
-                border: '1px solid rgba(37,211,102,0.35)',
+                background: 'rgba(37,211,102,0.12)',
+                border: '1px solid rgba(37,211,102,0.40)',
                 color: '#25D366',
               }}
             >
-              <MessageCircle className="w-3.5 h-3.5" />
+              <WhatsAppIcon className="w-4 h-4 flex-shrink-0" />
               <span>WhatsApp</span>
             </a>
 
@@ -182,7 +181,7 @@ export default function Navbar({
             </Link>
           </div>
 
-          {/* ── Mobile Icons ── */}
+          {/* ── Mobile Action Icons ── */}
           <div className="flex md:hidden items-center gap-2">
             <Link
               href="/login"
@@ -264,28 +263,30 @@ export default function Navbar({
 
           <div className="pt-4 space-y-3">
             <a
-              href={`https://wa.me/${waNum}?text=${encodeURIComponent('Hello! I saw your perfumes and would like to order.')}`}
+              href={`https://wa.me/${waNum}?text=${encodeURIComponent(
+                `Hello! I saw your perfumes on ${storeName} and would like to order.`
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2.5 font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider"
+              className="w-full flex items-center justify-center gap-2.5 font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider shadow-lg"
               style={{ background: '#25D366', color: '#000' }}
             >
-              <MessageCircle className="w-4 h-4" />
-              Chat on WhatsApp
+              <WhatsAppIcon className="w-4 h-4 flex-shrink-0" />
+              <span>Connect on WhatsApp</span>
             </a>
             {snapchatHandle && (
               <a
                 href={`https://snapchat.com/add/${snapchatHandle}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2.5 font-semibold py-3 rounded-2xl text-xs"
+                className="w-full flex items-center justify-center gap-2.5 font-bold py-3 rounded-2xl text-xs uppercase tracking-wider"
                 style={{
-                  background: 'rgba(255,252,0,0.10)',
-                  border: '1px solid rgba(255,252,0,0.25)',
-                  color: '#FFFC00',
+                  background: '#FFFC00',
+                  color: '#000',
                 }}
               >
-                📸 Snapchat: @{snapchatHandle}
+                <SnapchatIcon className="w-4 h-4 flex-shrink-0" />
+                <span>Connect on Snapchat</span>
               </a>
             )}
           </div>

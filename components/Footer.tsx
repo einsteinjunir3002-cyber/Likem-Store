@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { MessageCircle, ShieldCheck, Truck, Clock, Sparkles, Phone, MapPin } from 'lucide-react';
+import { ShieldCheck, Truck, Clock, Phone, MapPin, MessageSquare } from 'lucide-react';
+import { WhatsAppIcon, SnapchatIcon } from '@/components/SocialIcons';
 
 interface FooterProps {
   storeName?: string;
@@ -10,7 +11,7 @@ interface FooterProps {
 }
 
 export default function Footer({
-  storeName = 'LIKEM Fragrances',
+  storeName = 'The Likem Perfumery',
   phoneContact = '0502547133',
   whatsappNumber = '+233502547133',
   snapchatHandle = 'lilitracess',
@@ -64,8 +65,8 @@ export default function Footer({
                 Online Delivery Studio
               </div>
               <p className="text-[#64748b] font-light leading-relaxed">
-                We operate as a digital perfume house with direct door-to-door
-                courier dispatch. No physical walk-in shop.
+                We trade directly via WhatsApp and Snapchat with prompt courier
+                dispatch. No physical walk-in shop.
               </p>
             </div>
           </div>
@@ -115,7 +116,7 @@ export default function Footer({
             </ul>
           </div>
 
-          {/* ── Dispatch Operations ── */}
+          {/* ── Dispatch Operations & Social Concierge ── */}
           <div className="md:col-span-4 space-y-5">
             <h4 className="section-label">Dispatch Operations</h4>
             <div className="space-y-4">
@@ -132,8 +133,8 @@ export default function Footer({
                 },
                 {
                   icon: ShieldCheck,
-                  title: 'Payment',
-                  desc: 'MoMo or arranged directly via WhatsApp',
+                  title: 'Payment & Ordering',
+                  desc: 'MoMo, Card, or arranged via WhatsApp & Snapchat',
                 },
               ].map((item) => (
                 <div key={item.title} className="flex items-start gap-3">
@@ -150,39 +151,57 @@ export default function Footer({
               ))}
             </div>
 
-            {/* Contact channels */}
+            {/* Social media & direct channels with official icons */}
             <div className="pt-4 space-y-2.5">
-              <h4 className="section-label">Concierge</h4>
-              <div className="flex flex-col gap-2">
+              <h4 className="section-label">Follow Our Handles & Concierge</h4>
+              <div className="flex flex-col gap-2.5">
+
+                {/* WhatsApp */}
                 <a
-                  href={`tel:${phoneContact}`}
-                  className="flex items-center gap-2 text-[11px] text-[#64748b] hover:text-[#d4af37] transition-colors"
-                >
-                  <Phone className="w-3 h-3 text-[#d4af37]" />
-                  <span>{phoneContact}</span>
-                </a>
-                <a
-                  href={`https://wa.me/${waNum}`}
+                  href={`https://wa.me/${waNum}?text=${encodeURIComponent(
+                    `Hello! I would like to contact ${storeName}.`
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-[11px] hover:text-[#20ba59] transition-colors"
+                  className="flex items-center gap-2 text-[11px] hover:brightness-125 transition-all"
                   style={{ color: '#25D366' }}
                 >
-                  <MessageCircle className="w-3 h-3" />
-                  <span>{whatsappNumber}</span>
+                  <WhatsAppIcon className="w-4 h-4 flex-shrink-0" />
+                  <span>Connect on WhatsApp</span>
                 </a>
+
+                {/* Snapchat */}
                 {snapchatHandle && (
                   <a
                     href={`https://snapchat.com/add/${snapchatHandle}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-[11px] hover:opacity-80 transition-opacity"
+                    className="flex items-center gap-2 text-[11px] hover:brightness-125 transition-all"
                     style={{ color: '#FFFC00' }}
                   >
-                    <span>📸</span>
-                    <span>@{snapchatHandle}</span>
+                    <SnapchatIcon className="w-4 h-4 flex-shrink-0" />
+                    <span>Connect on Snapchat (@{snapchatHandle})</span>
                   </a>
                 )}
+
+                {/* Call */}
+                <a
+                  href={`tel:${phoneContact}`}
+                  className="flex items-center gap-2 text-[11px] text-[#94a3b8] hover:text-[#d4af37] transition-colors"
+                >
+                  <Phone className="w-3.5 h-3.5 text-[#d4af37] flex-shrink-0" />
+                  <span>Call: {phoneContact}</span>
+                </a>
+
+                {/* SMS */}
+                <a
+                  href={`sms:${phoneContact}?body=${encodeURIComponent(`Hello ${storeName}!`)}`}
+                  className="flex items-center gap-2 text-[11px] text-[#94a3b8] hover:text-[#f5e4ab] transition-colors"
+                >
+                  <MessageSquare className="w-3.5 h-3.5 text-[#f5e4ab] flex-shrink-0" />
+                  <span>Send SMS: {phoneContact}</span>
+                </a>
+
               </div>
             </div>
           </div>
@@ -190,17 +209,17 @@ export default function Footer({
 
         {/* ── Bottom Bar ── */}
         <div className="gold-divider mb-6" />
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] text-[#2d3748]">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] text-[#475569]">
           <div>
             © {new Date().getFullYear()} {storeName}. All rights reserved.
             Prices in Ghana Cedis (GH₵) only.
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/delivery-faq" className="hover:text-[#64748b] transition-colors">
+            <Link href="/delivery-faq" className="hover:text-[#94a3b8] transition-colors">
               Terms & Dispatch Guide
             </Link>
             <span className="text-[#1a202c]">·</span>
-            <Link href="/contact" className="hover:text-[#64748b] transition-colors">
+            <Link href="/contact" className="hover:text-[#94a3b8] transition-colors">
               Direct Inquiries
             </Link>
             <span className="text-[#1a202c]">·</span>

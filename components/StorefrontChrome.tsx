@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { MessageCircle, ShoppingBag, Home, Package } from 'lucide-react';
+import { ShoppingBag, Home, Package } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/SocialIcons';
 
 interface StorefrontChromeProps {
   children: React.ReactNode;
@@ -85,15 +86,15 @@ export default function StorefrontChrome({
           <span>Shop</span>
         </Link>
 
-        {/* WhatsApp — centre, gold pill */}
+        {/* WhatsApp — centre, official green pill */}
         <a
           href={`https://wa.me/${waNum}?text=${encodeURIComponent(
-            'Hello! I am viewing your perfume collection and would like to place an order.'
+            `Hello! I am viewing fragrances on ${storeName || 'The Likem Perfumery'} and would like to place an order.`
           )}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex-shrink-0 mx-2 flex flex-col items-center justify-center gap-0.5
-                     px-5 py-2.5 rounded-full font-extrabold text-[9px] uppercase tracking-wider
+                     px-4 py-2 rounded-full font-extrabold text-[9px] uppercase tracking-wider
                      shadow-lg transition-all"
           style={{
             background: '#25D366',
@@ -101,8 +102,8 @@ export default function StorefrontChrome({
             boxShadow: '0 4px 16px rgba(37, 211, 102, 0.35)',
           }}
         >
-          <MessageCircle className="w-5 h-5 fill-black/20" />
-          <span>Order</span>
+          <WhatsAppIcon className="w-4 h-4 flex-shrink-0" />
+          <span>WhatsApp</span>
         </a>
 
         {/* Cart */}
