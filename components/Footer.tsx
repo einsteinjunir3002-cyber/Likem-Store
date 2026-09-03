@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { MessageCircle, ShieldCheck, Truck, Clock, Sparkles } from 'lucide-react';
+import { MessageCircle, ShieldCheck, Truck, Clock, Sparkles, Phone, MapPin } from 'lucide-react';
 
 interface FooterProps {
   storeName?: string;
@@ -15,130 +15,197 @@ export default function Footer({
   whatsappNumber = '+233502547133',
   snapchatHandle = 'lilitracess',
 }: FooterProps) {
+  const waNum = whatsappNumber.replace(/[^0-9]/g, '');
+
   return (
-    <footer className="bg-[#050608] border-t border-[#d4af37]/20 text-[#94a3b8] text-xs pt-16 pb-24 md:pb-14 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          {/* Brand Column */}
-          <div className="space-y-4 md:col-span-1">
-            <span className="font-serif-luxury text-2xl tracking-[0.15em] text-white uppercase flex items-center gap-2">
-              <span className="text-[#d4af37] text-lg">✦</span> {storeName}
-            </span>
-            <p className="text-[11px] text-[#717b94] leading-relaxed font-light">
-              Haute parfumerie boutique operating exclusively online in Ghana. Every fragrance is an authentic luxury composition delivered with utmost discretion across Accra, Kumasi, and nationwide.
+    <footer
+      className="relative overflow-hidden text-xs pt-20 pb-28 md:pb-16"
+      style={{
+        background: 'linear-gradient(180deg, #050508 0%, #04040a 100%)',
+        borderTop: '1px solid rgba(212, 175, 55, 0.14)',
+      }}
+    >
+      {/* Ambient glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-40 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at center, rgba(212,175,55,0.05) 0%, transparent 70%)' }}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+
+          {/* ── Brand Column ── */}
+          <div className="md:col-span-4 space-y-5">
+            {/* Logo */}
+            <Link href="/" className="flex flex-col group w-fit">
+              <span className="font-serif-luxury text-2xl tracking-[0.16em] text-white uppercase flex items-center gap-2.5 group-hover:text-[#f5e4ab] transition-colors">
+                <span className="text-[#d4af37] text-lg">✦</span>
+                {storeName}
+              </span>
+              <span className="text-[8px] tracking-[0.42em] text-[#d4af37]/60 uppercase font-semibold pl-7">
+                Parfums · Accra · Ghana
+              </span>
+            </Link>
+
+            <p className="text-[11px] text-[#475569] leading-relaxed font-light max-w-xs">
+              Haute parfumerie boutique operating exclusively online in Ghana.
+              Every fragrance is an authentic luxury composition delivered with
+              utmost care across Accra, Kumasi, and nationwide.
             </p>
-            <div className="text-[11px] text-[#f5e4ab] bg-[#d4af37]/10 border border-[#d4af37]/25 p-3 rounded-xl">
-              <div className="font-semibold uppercase tracking-wider text-[10px]">Direct Delivery Studio:</div>
-              <div className="text-[#cbd5e1] mt-0.5 font-light">
-                We operate as an online studio with direct door-to-door courier dispatch. No physical walk-in shop.
+
+            <div
+              className="p-4 rounded-2xl text-[11px] space-y-1"
+              style={{
+                background: 'rgba(212,175,55,0.06)',
+                border: '1px solid rgba(212,175,55,0.18)',
+              }}
+            >
+              <div className="flex items-center gap-2 text-[#d4af37] font-bold uppercase tracking-wider text-[9px] mb-2">
+                <MapPin className="w-3 h-3" />
+                Online Delivery Studio
               </div>
+              <p className="text-[#64748b] font-light leading-relaxed">
+                We operate as a digital perfume house with direct door-to-door
+                courier dispatch. No physical walk-in shop.
+              </p>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-3">
-            <h4 className="text-[10px] uppercase tracking-[0.25em] text-[#d4af37] font-bold">The Collection</h4>
-            <ul className="space-y-2.5 text-xs font-light">
-              <li>
-                <Link href="/products" className="hover:text-[#f5e4ab] transition-colors">
-                  All Perfumes &amp; Extraits
-                </Link>
-              </li>
-              <li>
-                <Link href="/delivery-faq" className="hover:text-[#f5e4ab] transition-colors">
-                  Ghana Delivery Rates &amp; Areas
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-[#f5e4ab] transition-colors">
-                  Bespoke Scent Inquiry
-                </Link>
-              </li>
-              <li>
-                <Link href="/cart" className="hover:text-[#f5e4ab] transition-colors">
-                  Shopping Bag
-                </Link>
-              </li>
+          {/* ── Quick Links ── */}
+          <div className="md:col-span-2 space-y-4">
+            <h4 className="section-label">Shop</h4>
+            <ul className="space-y-3">
+              {[
+                { href: '/products', label: 'All Fragrances' },
+                { href: '/products', label: 'New Arrivals' },
+                { href: '/cart', label: 'Shopping Bag' },
+                { href: '/search', label: 'Search Perfumes' },
+              ].map((link) => (
+                <li key={link.href + link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-[#64748b] hover:text-[#f5e4ab] transition-colors font-light text-[11px]"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Delivery & Ordering Model */}
-          <div className="space-y-3">
-            <h4 className="text-[10px] uppercase tracking-[0.25em] text-[#d4af37] font-bold">Dispatch Operations</h4>
-            <div className="space-y-3 text-xs font-light text-[#cbd5e1]">
-              <div className="flex items-start gap-2.5">
-                <Truck className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
-                <span>Greater Accra &amp; Tema: Same-day or next-day courier</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <Clock className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
-                <span>Kumasi &amp; Other Regions: 24 to 48 hours secured parcel</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
-                <span>Payment confirmed via MoMo or arranged on WhatsApp</span>
-              </div>
-            </div>
+          {/* ── Info Links ── */}
+          <div className="md:col-span-2 space-y-4">
+            <h4 className="section-label">Info</h4>
+            <ul className="space-y-3">
+              {[
+                { href: '/delivery-faq', label: 'Delivery & FAQ' },
+                { href: '/contact', label: 'Contact Us' },
+                { href: '/login', label: 'Sign In' },
+                { href: '/register', label: 'Create Account' },
+                { href: '/admin/login', label: 'Owner Portal' },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-[#64748b] hover:text-[#f5e4ab] transition-colors font-light text-[11px]"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {/* Contact & Socials */}
-          <div className="space-y-3">
-            <h4 className="text-[10px] uppercase tracking-[0.25em] text-[#d4af37] font-bold">Concierge Channels</h4>
-            <div className="space-y-2.5 text-xs font-light">
-              <p className="flex items-center gap-2">
-                <span className="text-[#94a3b8]">Phone:</span>
-                <a href={`tel:${phoneContact}`} className="text-white hover:text-[#d4af37] font-medium">
-                  {phoneContact}
-                </a>
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-[#94a3b8]">WhatsApp:</span>
+          {/* ── Dispatch Operations ── */}
+          <div className="md:col-span-4 space-y-5">
+            <h4 className="section-label">Dispatch Operations</h4>
+            <div className="space-y-4">
+              {[
+                {
+                  icon: Truck,
+                  title: 'Accra & Tema',
+                  desc: 'Same-day or next-day courier dispatch',
+                },
+                {
+                  icon: Clock,
+                  title: 'Kumasi & Regions',
+                  desc: '24–48 hours secured parcel delivery',
+                },
+                {
+                  icon: ShieldCheck,
+                  title: 'Payment',
+                  desc: 'MoMo or arranged directly via WhatsApp',
+                },
+              ].map((item) => (
+                <div key={item.title} className="flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                    style={{ background: 'rgba(212,175,55,0.10)', border: '1px solid rgba(212,175,55,0.20)' }}
+                  >
+                    <item.icon className="w-3.5 h-3.5 text-[#d4af37]" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-[#cbd5e1] tracking-wide">{item.title}</div>
+                    <div className="text-[#475569] font-light leading-relaxed">{item.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Contact channels */}
+            <div className="pt-4 space-y-2.5">
+              <h4 className="section-label">Concierge</h4>
+              <div className="flex flex-col gap-2">
                 <a
-                  href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`}
+                  href={`tel:${phoneContact}`}
+                  className="flex items-center gap-2 text-[11px] text-[#64748b] hover:text-[#d4af37] transition-colors"
+                >
+                  <Phone className="w-3 h-3 text-[#d4af37]" />
+                  <span>{phoneContact}</span>
+                </a>
+                <a
+                  href={`https://wa.me/${waNum}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#25D366] hover:underline font-medium"
+                  className="flex items-center gap-2 text-[11px] hover:text-[#20ba59] transition-colors"
+                  style={{ color: '#25D366' }}
                 >
-                  {whatsappNumber}
+                  <MessageCircle className="w-3 h-3" />
+                  <span>{whatsappNumber}</span>
                 </a>
-              </p>
-              {snapchatHandle && (
-                <p className="flex items-center gap-2">
-                  <span className="text-[#94a3b8]">Snapchat:</span>
+                {snapchatHandle && (
                   <a
                     href={`https://snapchat.com/add/${snapchatHandle}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#FFFC00] hover:underline font-medium"
+                    className="flex items-center gap-2 text-[11px] hover:opacity-80 transition-opacity"
+                    style={{ color: '#FFFC00' }}
                   >
-                    @{snapchatHandle}
+                    <span>📸</span>
+                    <span>@{snapchatHandle}</span>
                   </a>
-                </p>
-              )}
-            </div>
-
-            <div className="pt-3">
-              <Link
-                href="/admin/login"
-                className="text-[10px] uppercase tracking-widest text-[#475569] hover:text-[#d4af37] transition-colors"
-              >
-                Owner Portal &rarr;
-              </Link>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-[#d4af37]/15 flex flex-col sm:flex-row justify-between items-center text-[11px] text-[#64748b]">
+        {/* ── Bottom Bar ── */}
+        <div className="gold-divider mb-6" />
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] text-[#2d3748]">
           <div>
-            &copy; {new Date().getFullYear()} {storeName}. All rights reserved. Prices strictly in Ghana Cedis (GH₵).
+            © {new Date().getFullYear()} {storeName}. All rights reserved.
+            Prices in Ghana Cedis (GH₵) only.
           </div>
-          <div className="mt-2 sm:mt-0 flex gap-4">
-            <Link href="/delivery-faq" className="hover:text-white">
-              Terms &amp; Dispatch Guide
+          <div className="flex items-center gap-4">
+            <Link href="/delivery-faq" className="hover:text-[#64748b] transition-colors">
+              Terms & Dispatch Guide
             </Link>
-            <span>&middot;</span>
-            <Link href="/contact" className="hover:text-white">
+            <span className="text-[#1a202c]">·</span>
+            <Link href="/contact" className="hover:text-[#64748b] transition-colors">
               Direct Inquiries
+            </Link>
+            <span className="text-[#1a202c]">·</span>
+            <Link href="/admin/login" className="hover:text-[#d4af37] transition-colors">
+              Owner Portal
             </Link>
           </div>
         </div>

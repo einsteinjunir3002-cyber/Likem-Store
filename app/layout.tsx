@@ -5,14 +5,25 @@ import StorefrontChrome from '@/components/StorefrontChrome';
 import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = {
-  title: 'LIKEM Fragrances | Ghanaian Perfume Studio',
-  description: 'Authentic perfumes and luxury fragrances delivered across Accra, Kumasi and all regions of Ghana. Order directly via WhatsApp or checkout online.',
+  title: 'LIKEM Fragrances | Luxury Perfumes in Ghana',
+  description:
+    'Discover authentic luxury fragrances and perfumes curated for Ghana. Shop oriental, designer, and rare extraits de parfum with direct WhatsApp ordering and nationwide delivery.',
+  keywords: 'perfumes Ghana, luxury fragrances Accra, Lattafa Ghana, Arabian perfumes, buy perfume online Ghana, LIKEM fragrances',
   openGraph: {
     title: 'LIKEM Fragrances | Premium Perfumes in Ghana',
-    description: 'Explore authentic perfumes with delivery across Ghana. WhatsApp ordering and Mobile Money supported.',
+    description:
+      'Authentic perfumes with delivery across Ghana. WhatsApp ordering and Mobile Money supported.',
     locale: 'en_GH',
     type: 'website',
+    siteName: 'LIKEM Fragrances',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'LIKEM Fragrances | Luxury Perfumes Ghana',
+    description: 'Authentic luxury perfumes delivered across Ghana',
+  },
+  robots: { index: true, follow: true },
+  themeColor: '#d4af37',
 };
 
 export default async function RootLayout({
@@ -26,7 +37,11 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen flex flex-col bg-[#0d0e12] text-[#f8fafc]">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
+      <body className="antialiased min-h-screen flex flex-col" style={{ background: '#050508' }}>
         <CartProvider>
           <StorefrontChrome
             storeName={settings?.storeName}

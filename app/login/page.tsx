@@ -3,12 +3,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Lock, ArrowRight, Sparkles, User, ShieldCheck, UserCheck } from 'lucide-react';
+import { Lock, ArrowRight, Eye, EyeOff, UserCheck, Sparkles } from 'lucide-react';
 
 export default function SignInPage() {
   const router = useRouter();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +30,6 @@ export default function SignInPage() {
         throw new Error(data.error || 'Invalid credentials');
       }
 
-      // If owner login, redirect straight to admin panel with full privileges
       if (data.role === 'ADMIN') {
         router.push('/admin');
       } else {
@@ -43,102 +43,154 @@ export default function SignInPage() {
     }
   };
 
-  const handleContinueAsGuest = () => {
-    router.push('/products');
-  };
-
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md glass-luxury rounded-3xl p-8 sm:p-10 space-y-7 shadow-2xl relative overflow-hidden">
-        {/* Glow accent */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4af37]/10 rounded-full blur-2xl pointer-events-none" />
+    <div className="min-h-[90vh] flex items-center justify-center px-4 py-16 relative overflow-hidden">
+      {/* Background ambience */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-80"
+          style={{ background: 'radial-gradient(ellipse at top, rgba(212,175,55,0.07) 0%, transparent 70%)' }}
+        />
+        <div
+          className="absolute bottom-0 right-0 w-72 h-72"
+          style={{ background: 'radial-gradient(ellipse at right bottom, rgba(212,175,55,0.05) 0%, transparent 60%)' }}
+        />
+      </div>
 
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/35 text-[#d4af37] flex items-center justify-center mx-auto shadow-lg">
-            <Lock className="w-5 h-5" />
-          </div>
-          <span className="text-[10px] uppercase tracking-[0.25em] text-[#d4af37] font-bold block">
-            LIKEM Haute Parfumerie
-          </span>
-          <h1 className="font-serif-luxury text-3xl sm:text-4xl text-white font-normal">
-            Welcome Back
-          </h1>
-          <p className="text-xs text-[#94a3b8] font-light">
-            Sign in to your account, manage store as Owner, or continue browsing.
-          </p>
-        </div>
+      <div className="w-full max-w-md relative z-10">
+        {/* Card */}
+        <div className="glass-luxury rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden">
+          {/* Card top glow line */}
+          <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent" />
 
-        {error && (
-          <div className="p-3.5 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl flex items-center gap-2">
-            <span>{error}</span>
-          </div>
-        )}
+          {/* Header */}
+          <div className="text-center space-y-3 mb-8">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-gold-pulse"
+              style={{
+                background: 'rgba(212,175,55,0.12)',
+                border: '1px solid rgba(212,175,55,0.30)',
+              }}
+            >
+              <Lock className="w-6 h-6 text-[#d4af37]" />
+            </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#cbd5e1] tracking-wider uppercase text-[10px]">
-              Username, Email or Phone
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="e.g. Esq. Likem or phone"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              className="w-full bg-[#07080b] border border-[#d4af37]/30 rounded-xl p-3 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#d4af37] transition-all"
-            />
-          </div>
+            <div className="badge-gold mx-auto w-fit">
+              <Sparkles className="w-2.5 h-2.5" />
+              <span>LIKEM Haute Parfumerie</span>
+            </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#cbd5e1] tracking-wider uppercase text-[10px]">
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-[#07080b] border border-[#d4af37]/30 rounded-xl p-3 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#d4af37] transition-all"
-            />
+            <h1 className="font-serif-luxury text-4xl sm:text-5xl text-white font-light mt-2">
+              Welcome Back
+            </h1>
+            <p className="text-xs text-[#64748b] font-light leading-relaxed">
+              Sign in to your account, manage the store as Owner,
+              or continue browsing our collection.
+            </p>
           </div>
 
+          {/* Error */}
+          {error && (
+            <div
+              className="p-4 rounded-2xl text-xs text-red-400 mb-6 flex items-center gap-2.5"
+              style={{
+                background: 'rgba(239,68,68,0.08)',
+                border: '1px solid rgba(239,68,68,0.25)',
+              }}
+            >
+              <span className="text-base">⚠️</span>
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div className="space-y-2">
+              <label className="section-label text-[9px]">
+                Username, Email or Phone
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Esq. Likem or your email"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                className="w-full input-luxury rounded-2xl px-5 py-3.5 text-xs"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="section-label text-[9px]">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full input-luxury rounded-2xl px-5 py-3.5 pr-12 text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#475569] hover:text-[#d4af37] transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full btn-gold-luxury flex items-center justify-center gap-2.5 py-4 px-6 rounded-full text-[11px] mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <span className="w-3.5 h-3.5 rounded-full border-2 border-[#050508]/30 border-t-[#050508] animate-spin" />
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="my-6 flex items-center gap-4">
+            <div className="gold-divider flex-1" />
+            <span className="text-[10px] uppercase tracking-widest text-[#475569]">or</span>
+            <div className="gold-divider flex-1" />
+          </div>
+
+          {/* Continue as Guest */}
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full btn-gold-luxury flex items-center justify-center gap-2 py-3.5 px-5 rounded-full text-xs transition-all disabled:opacity-50 mt-2"
+            type="button"
+            onClick={() => router.push('/products')}
+            className="w-full btn-outline-luxury flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-full text-[11px]"
           >
-            <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
-            <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+            <UserCheck className="w-4 h-4 text-[#d4af37]" />
+            <span>Continue as a Guest</span>
           </button>
-        </form>
 
-        {/* Divider with or continue as guest */}
-        <div className="relative flex items-center justify-center pt-2">
-          <div className="border-t border-[#d4af37]/20 w-full" />
-          <span className="bg-[#0b0e17] px-3 text-[10px] uppercase tracking-widest text-[#717b94] shrink-0">
-            or
-          </span>
-          <div className="border-t border-[#d4af37]/20 w-full" />
+          {/* Register link */}
+          <div className="mt-6 text-center text-xs text-[#475569]">
+            <span>Don&apos;t have an account? </span>
+            <Link href="/register" className="text-[#f5e4ab] font-bold hover:text-[#d4af37] transition-colors">
+              Create an Account
+            </Link>
+          </div>
         </div>
 
-        {/* Continue as Guest Button */}
-        <button
-          type="button"
-          onClick={handleContinueAsGuest}
-          className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-full bg-[#131622] hover:bg-[#1a1f2e] border border-[#d4af37]/30 text-[#f1f5f9] text-xs font-semibold tracking-wider uppercase transition-all shadow-sm"
-        >
-          <UserCheck className="w-4 h-4 text-[#d4af37]" />
-          <span>Continue as a Guest</span>
-        </button>
-
-        {/* Links to Register */}
-        <div className="pt-2 text-center text-xs text-[#94a3b8]">
-          <span>Don&apos;t have an account? </span>
-          <Link href="/register" className="text-[#f5e4ab] font-bold hover:underline">
-            Create an Account
-          </Link>
-        </div>
+        {/* Owner hint */}
+        <p className="text-center text-[10px] text-[#2d3748] mt-4">
+          Owner login: use{' '}
+          <span className="text-[#475569]">Esq. Likem</span>{' '}
+          with the store password to access admin controls.
+        </p>
       </div>
     </div>
   );
