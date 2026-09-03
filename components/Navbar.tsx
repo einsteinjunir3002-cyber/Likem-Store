@@ -46,36 +46,46 @@ export default function Navbar({
     >
       {/* Announcement Banner */}
       <div
-        className="text-[10px] text-[#f5e4ab] py-2 px-4 text-center tracking-[0.22em] uppercase font-semibold border-b border-[#d4af37]/10"
+        className="text-[9px] sm:text-[10px] text-[#f5e4ab] py-1.5 sm:py-2 px-4 text-center
+                   tracking-[0.18em] sm:tracking-[0.22em] uppercase font-semibold
+                   border-b border-[#d4af37]/10"
         style={{
           background: 'linear-gradient(90deg, #050508 0%, #130f04 40%, #050508 80%, #0d0a00 100%)',
         }}
       >
-        <span className="inline-flex items-center gap-2.5">
-          <Sparkles className="w-2.5 h-2.5 text-[#d4af37]" />
-          <span className="text-shimmer font-bold">Haute Parfumerie</span>
-          <span className="text-[#64748b]">·</span>
-          <span>Handpicked Originals Delivered Across Ghana</span>
-          <Sparkles className="w-2.5 h-2.5 text-[#d4af37]" />
+        <span className="inline-flex items-center gap-2">
+          <Sparkles className="w-2.5 h-2.5 text-[#d4af37] flex-shrink-0" />
+          <span className="hidden sm:inline">
+            <span className="text-shimmer font-bold">Haute Parfumerie</span>
+            <span className="text-[#64748b] mx-1.5">·</span>
+            <span>Handpicked Originals Delivered Across Ghana</span>
+          </span>
+          <span className="sm:hidden text-shimmer font-bold">Luxury Fragrances · Ghana</span>
+          <Sparkles className="w-2.5 h-2.5 text-[#d4af37] flex-shrink-0" />
         </span>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[72px]">
+        <div className="flex items-center justify-between h-14 sm:h-[72px]">
 
           {/* ── Brand Logo ── */}
-          <Link href="/" className="flex flex-col group flex-shrink-0">
-            <span className="font-serif-luxury text-2xl sm:text-3xl tracking-[0.16em] text-white font-medium uppercase transition-colors group-hover:text-[#f5e4ab] flex items-center gap-2.5">
+          <Link href="/" className="flex flex-col group flex-shrink-0 min-w-0">
+            <span className="font-serif-luxury tracking-[0.12em] sm:tracking-[0.16em] text-white
+                             font-medium uppercase transition-colors group-hover:text-[#f5e4ab]
+                             flex items-center gap-1.5 sm:gap-2.5 leading-none"
+              style={{ fontSize: 'clamp(1.1rem, 4vw, 1.5rem)' }}>
               <span
-                className="text-[#d4af37] text-lg transition-transform group-hover:rotate-45 duration-500"
-                style={{ display: 'inline-block' }}
+                className="text-[#d4af37] transition-transform group-hover:rotate-45 duration-500
+                           flex-shrink-0"
+                style={{ display: 'inline-block', fontSize: '0.9em' }}
               >
                 ✦
               </span>
-              {storeName}
+              <span className="truncate">{storeName}</span>
             </span>
-            <span className="text-[8px] tracking-[0.42em] text-[#d4af37]/70 uppercase font-semibold pl-7 -mt-0.5">
-              Parfums · Accra · Ghana
+            <span className="text-[7px] sm:text-[8px] tracking-[0.35em] sm:tracking-[0.42em]
+                             text-[#d4af37]/70 uppercase font-semibold pl-5 sm:pl-7 -mt-0.5">
+              Parfums · Accra
             </span>
           </Link>
 
@@ -207,17 +217,17 @@ export default function Navbar({
         </div>
 
         {/* ── Mobile Search ── */}
-        <div className="pb-3 md:hidden">
+        <div className="pb-2 sm:pb-3 md:hidden">
           <form onSubmit={handleSearch} className="relative">
             <input
               type="text"
               placeholder="Search perfumes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full input-luxury rounded-xl py-2.5 pl-4 pr-10 text-xs"
+              className="w-full input-luxury rounded-xl py-2 pl-4 pr-10 text-[11px]"
             />
             <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d4af37]">
-              <Search className="w-4 h-4" />
+              <Search className="w-3.5 h-3.5" />
             </button>
           </form>
         </div>

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import StorefrontChrome from '@/components/StorefrontChrome';
@@ -24,6 +24,16 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   themeColor: '#d4af37',
+};
+
+// Correct viewport export — prevents iOS from zooming on input fields
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5, // Allow pinch-to-zoom for accessibility
+  userScalable: true,
+  themeColor: '#d4af37',
+  colorScheme: 'dark',
 };
 
 export default async function RootLayout({
