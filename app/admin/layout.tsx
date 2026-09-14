@@ -19,7 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   // If viewing admin route without cookie, let the login page handle itself
   return (
-    <div className="min-h-screen bg-[#090a0e] text-[#f8fafc] flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#090a0e] text-[#f8fafc] flex flex-col md:flex-row overflow-x-hidden">
 
       {/* ── Mobile Top Nav (phones only, hidden on md+) ── */}
       <header className="md:hidden bg-[#11131a] border-b border-[#1e2330] shrink-0">

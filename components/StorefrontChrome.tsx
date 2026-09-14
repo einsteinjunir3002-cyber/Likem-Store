@@ -33,7 +33,7 @@ export default function StorefrontChrome({
   }
 
   return (
-    <>
+    <div className="overflow-x-hidden flex flex-col min-h-screen">
       <Navbar
         storeName={storeName}
         whatsappNumber={whatsappNumber}
@@ -133,6 +133,6 @@ export default function StorefrontChrome({
           <span>Contact</span>
         </Link>
       </div>
-    </>
+    </div>
   );
 }

@@ -33,8 +33,9 @@ export default async function AdminProductsPage() {
       </div>
 
       {/* Single horizontally-scrollable table — works on all screen sizes */}
-      <div className="bg-[#151821] border border-[#262b3d] rounded-2xl overflow-hidden shadow-xl">
-        <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+      <div className="bg-[#151821] border border-[#262b3d] rounded-2xl shadow-xl">
+        {/* overflow-x-auto must be on a direct wrapper with no overflow:hidden ancestor */}
+        <div className="overflow-x-auto rounded-2xl" style={{ WebkitOverflowScrolling: 'touch' }}>
           <table className="text-left text-xs" style={{ minWidth: '660px', width: '100%' }}>
             <thead className="bg-[#0d0e12] text-[#94a3b8] uppercase text-[10px] font-bold border-b border-[#262b3d]">
               <tr>
