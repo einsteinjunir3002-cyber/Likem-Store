@@ -32,8 +32,8 @@ export default async function AdminProductsPage() {
         </Link>
       </div>
 
-      {/* Desktop Table View */}
-      <div className="hidden md:block bg-[#151821] border border-[#262b3d] rounded-2xl overflow-hidden shadow-xl">
+      {/* Desktop Table View (sm+ screens) */}
+      <div className="hidden sm:block bg-[#151821] border border-[#262b3d] rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm min-w-[700px]">
             <thead className="bg-[#0d0e12] text-[#94a3b8] uppercase text-[11px] font-bold border-b border-[#262b3d]">
@@ -112,8 +112,8 @@ export default async function AdminProductsPage() {
         </div>
       </div>
 
-      {/* Mobile Card List View (< md screens) */}
-      <div className="block md:hidden space-y-3">
+      {/* Mobile Card List View (< sm screens) */}
+      <div className="block sm:hidden space-y-3">
         {products.map((p) => {
           const imgUrl = p.images[0]?.media?.url || '/uploads/perfumes/perfume_db293e4b7fc0.jpeg';
           return (

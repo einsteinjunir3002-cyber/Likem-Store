@@ -218,8 +218,8 @@ export default function AdminOrdersTable({ initialOrders }: { initialOrders: Adm
         </div>
       </div>
 
-      {/* Desktop Main Orders Table (md+ screens) */}
-      <div className="hidden md:block bg-[#151821] border border-[#262b3d] rounded-2xl overflow-hidden shadow-xl">
+      {/* Desktop Main Orders Table (sm+ screens) */}
+      <div className="hidden sm:block bg-[#151821] border border-[#262b3d] rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm min-w-[750px]">
             <thead className="bg-[#0d0e12] text-[#94a3b8] uppercase text-[10px] font-bold tracking-wider border-b border-[#262b3d]">
@@ -356,8 +356,8 @@ export default function AdminOrdersTable({ initialOrders }: { initialOrders: Adm
         </div>
       </div>
 
-      {/* Mobile Orders Card View (< md screens) */}
-      <div className="block md:hidden space-y-3">
+      {/* Mobile Orders Card View (< sm screens) */}
+      <div className="block sm:hidden space-y-3">
         {filteredOrders.length === 0 ? (
           <div className="bg-[#151821] border border-[#262b3d] rounded-2xl p-8 text-center text-xs text-[#64748b]">
             No orders match the selected search or filter.
