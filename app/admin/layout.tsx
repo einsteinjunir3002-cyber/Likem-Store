@@ -19,12 +19,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   // If viewing admin route without cookie, let the login page handle itself
   return (
-    <div className="min-h-screen bg-[#090a0e] text-[#f8fafc] flex flex-col md:flex-row overflow-x-hidden">
+    <div className="min-h-screen bg-[#090a0e] text-[#f8fafc] flex flex-col md:flex-row">
 
-      {/* ── Mobile Top Nav (phones only, hidden on md+) ── */}
-      <header className="md:hidden bg-[#11131a] border-b border-[#1e2330] shrink-0">
+      {/* ── Mobile Sticky Top Nav (phones only, stays fixed on scroll) ── */}
+      <header className="md:hidden sticky top-0 z-40 bg-[#11131a]/95 backdrop-blur-md border-b border-[#1e2330] shadow-lg shrink-0">
         {/* Brand bar */}
-        <div className="px-4 py-3 flex items-center justify-between border-b border-[#1e2330]">
+        <div className="px-4 py-2.5 flex items-center justify-between border-b border-[#1e2330]/80">
           <Link href="/admin" className="flex items-center gap-2 font-black text-xs tracking-wider uppercase">
             <span className="text-[#d4af37]">◆</span> LIKEM ADMIN
           </Link>
@@ -78,7 +78,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </header>
 
       {/* ── Desktop Sidebar (md+ screens only) ── */}
-      <aside className="hidden md:flex md:w-64 bg-[#11131a] border-r border-[#1e2330] flex-col justify-between shrink-0">
+      <aside className="hidden md:flex md:w-64 bg-[#11131a] border-r border-[#1e2330] flex-col justify-between shrink-0 md:sticky md:top-0 md:h-screen">
         <div>
           <div className="p-6 border-b border-[#1e2330] flex items-center justify-between">
             <Link href="/admin" className="flex items-center gap-2 font-black text-sm tracking-wider uppercase">
