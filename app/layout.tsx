@@ -5,6 +5,7 @@ import StorefrontChrome from '@/components/StorefrontChrome';
 import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://thelikemperfumery.vercel.app'),
   title: 'The Likem Perfumery | Luxury Fragrances in Ghana',
   description:
     'Discover authentic luxury fragrances and perfumes curated for Ghana. Shop oriental, designer, and rare extraits de parfum with direct WhatsApp ordering and nationwide delivery.',
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     title: 'The Likem Perfumery | Premium Perfumes in Ghana',
     description:
       'Authentic perfumes with delivery across Ghana. WhatsApp ordering and Mobile Money supported.',
+    url: 'https://thelikemperfumery.vercel.app',
     locale: 'en_GH',
     type: 'website',
     siteName: 'The Likem Perfumery',
@@ -21,6 +23,9 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'The Likem Perfumery | Luxury Perfumes Ghana',
     description: 'Authentic luxury perfumes delivered across Ghana',
+  },
+  alternates: {
+    canonical: 'https://thelikemperfumery.vercel.app',
   },
   robots: { index: true, follow: true },
 };
