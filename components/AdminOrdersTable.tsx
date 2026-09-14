@@ -218,10 +218,10 @@ export default function AdminOrdersTable({ initialOrders }: { initialOrders: Adm
         </div>
       </div>
 
-      {/* Main Orders Table */}
-      <div className="bg-[#151821] border border-[#262b3d] rounded-2xl overflow-hidden shadow-xl">
+      {/* Desktop Main Orders Table (md+ screens) */}
+      <div className="hidden md:block bg-[#151821] border border-[#262b3d] rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs sm:text-sm">
+          <table className="w-full text-left text-xs sm:text-sm min-w-[750px]">
             <thead className="bg-[#0d0e12] text-[#94a3b8] uppercase text-[10px] font-bold tracking-wider border-b border-[#262b3d]">
               <tr>
                 <th className="p-3 sm:p-4">Order Ref</th>
@@ -354,6 +354,131 @@ export default function AdminOrdersTable({ initialOrders }: { initialOrders: Adm
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Orders Card View (< md screens) */}
+      <div className="block md:hidden space-y-3">
+        {filteredOrders.length === 0 ? (
+          <div className="bg-[#151821] border border-[#262b3d] rounded-2xl p-8 text-center text-xs text-[#64748b]">
+            No orders match the selected search or filter.
+          </div>
+        ) : (
+          filteredOrders.map((o) => {
+            const cfg = STATUS_CONFIG[o.orderStatus] || STATUS_CONFIG.PENDING;
+            const isUpdating = updatingId === o.id;
+
+            return (
+              <div
+                key={o.id}
+                className="bg-[#151821] border border-[#262b3d] rounded-2xl p-4 space-y-3 shadow-lg"
+              >
+                {/* Header: Order Number, Source badge, and Date */}
+                <div className="flex items-start justify-between gap-2 border-b border-[#1e2330] pb-2.5">
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOrder(o)}
+                      className="font-mono font-black text-sm text-[#d4af37] hover:underline block text-left"
+                    >
+                      {o.orderNumber}
+                    </button>
+                    <div className="text-[11px] text-[#94a3b8] mt-0.5">
+                      {new Date(o.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        o.orderSource === 'WHATSAPP'
+                          ? 'bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/30'
+                          : 'bg-[#38bdf8]/10 text-[#38bdf8] border border-[#38bdf8]/30'
+                      }`}
+                    >
+                      {o.orderSource}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        o.paymentStatus === 'PAID'
+                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                          : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                      }`}
+                    >
+                      {o.paymentStatus}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Customer Details & Total */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="font-bold text-white text-xs truncate">
+                      {o.guestName || 'Anonymous Customer'}
+                    </div>
+                    {o.guestPhone && (
+                      <div className="text-[11px] text-[#94a3b8] flex items-center gap-1 mt-0.5">
+                        <Phone className="w-3 h-3 text-[#64748b]" />
+                        <span>{o.guestPhone}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="text-[10px] text-[#64748b] block font-bold uppercase tracking-wider">Total</span>
+                    <span className="font-black text-white text-sm">{formatGhs(o.totalInGhs)}</span>
+                  </div>
+                </div>
+
+                {/* Interactive Status Selector & View Button */}
+                <div className="flex items-center gap-2 pt-1">
+                  <div className="relative flex-1">
+                    <select
+                      disabled={isUpdating}
+                      value={o.orderStatus}
+                      onChange={(e) => handleStatusChange(o.id, e.target.value)}
+                      style={{
+                        backgroundColor: cfg.bg,
+                        color: cfg.text,
+                        borderColor: cfg.border,
+                      }}
+                      className="w-full appearance-none font-bold text-xs py-2 pl-3 pr-8 rounded-xl border focus:outline-none focus:ring-1 focus:ring-[#d4af37] cursor-pointer disabled:opacity-50 transition-all"
+                    >
+                      <option value="PENDING" className="bg-[#151821] text-amber-400">
+                        🟡 Pending
+                      </option>
+                      <option value="CONFIRMED" className="bg-[#151821] text-blue-400">
+                        🔵 Confirmed
+                      </option>
+                      <option value="PROCESSING" className="bg-[#151821] text-purple-400">
+                        🟣 Processing
+                      </option>
+                      <option value="OUT_FOR_DELIVERY" className="bg-[#151821] text-sky-400">
+                        🚚 Out for Delivery
+                      </option>
+                      <option value="DELIVERED" className="bg-[#151821] text-emerald-400">
+                        🟢 Delivered
+                      </option>
+                      <option value="CANCELLED" className="bg-[#151821] text-red-400">
+                        🔴 Cancelled
+                      </option>
+                    </select>
+                    <ChevronDown
+                      className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none opacity-75"
+                      style={{ color: cfg.text }}
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedOrder(o)}
+                    className="py-2 px-3.5 rounded-xl bg-[#1e2330] hover:bg-[#283042] text-[#d4af37] text-xs font-bold transition-colors inline-flex items-center gap-1.5 border border-[#262b3d] shrink-0"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>View</span>
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
 
       {/* ================================================================
