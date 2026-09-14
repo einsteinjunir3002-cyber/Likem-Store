@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Save, CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
+import { ArrowLeft, Save, CheckCircle, AlertCircle, Sparkles, Upload, Image as ImageIcon, X, Loader2 } from 'lucide-react';
 
 const FIELD = ({ label, highlight, children }: { label: string; highlight?: boolean; children: React.ReactNode }) => (
   <div className="space-y-1.5">
@@ -26,9 +26,47 @@ export default function AddNewPerfumePage() {
   const [concentration, setConcentration] = useState('Eau De Parfum');
   const [gender, setGender] = useState('Unisex');
   const [shortDescription, setShortDescription] = useState('');
-  const [status, setStatus] = useState('DRAFT');
+  const [status, setStatus] = useState('PUBLISHED');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  // Photo upload states
+  const [mediaId, setMediaId] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to upload photo');
+
+      setMediaId(data.media.id);
+      setPreviewUrl(data.media.url);
+    } catch (err: any) {
+      setUploadError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setMediaId(null);
+    setPreviewUrl(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,19 +78,29 @@ export default function AddNewPerfumePage() {
       const res = await fetch('/api/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, brandName, priceInGhs, stock, size, concentration, gender, shortDescription, status }),
+        body: JSON.stringify({
+          name,
+          brandName,
+          priceInGhs,
+          stock,
+          size,
+          concentration,
+          gender,
+          shortDescription,
+          status,
+          mediaId,
+        }),
       });
 
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || 'Failed to create perfume');
 
-      setResult({ type: 'success', message: `"${data.product.name}" added successfully!` });
+      setResult({ type: 'success', message: `"${data.product.name}" created successfully!` });
 
-      // Redirect to edit page after 1.2s so user can add image
       setTimeout(() => {
-        router.push(`/admin/products/edit/${data.product.id}`);
-      }, 1200);
+        router.push('/admin/products');
+      }, 1000);
     } catch (err: any) {
       setResult({ type: 'error', message: err.message });
     } finally {
@@ -80,7 +128,7 @@ export default function AddNewPerfumePage() {
       <div>
         <h1 className="text-2xl font-black text-white">Add New Perfume</h1>
         <p className="text-xs text-[#94a3b8] mt-1">
-          Fill in the details below. You can add a photo from the Media Library after saving.
+          Add a perfume to your catalog, upload its photo, and set inventory & pricing.
         </p>
       </div>
 
@@ -95,11 +143,62 @@ export default function AddNewPerfumePage() {
         >
           {result.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
           <span>{result.message}</span>
-          {result.type === 'success' && <span className="ml-1 text-[#94a3b8]">Redirecting to edit page…</span>}
+          {result.type === 'success' && <span className="ml-1 text-[#94a3b8]">Redirecting to product list…</span>}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5 bg-[#151821] border border-[#262b3d] rounded-2xl p-6 shadow-xl">
+      <form onSubmit={handleSubmit} className="space-y-6 bg-[#151821] border border-[#262b3d] rounded-2xl p-6 shadow-xl">
+        {/* Photo Upload Section */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold text-[#d4af37] block uppercase tracking-wider flex items-center gap-1.5">
+            <ImageIcon className="w-4 h-4" />
+            <span>Perfume Photo / Image</span>
+          </label>
+
+          {previewUrl ? (
+            <div className="relative w-40 h-40 rounded-2xl overflow-hidden border border-[#d4af37]/50 bg-[#0d0e12] group">
+              <img src={previewUrl} alt="Perfume preview" className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                className="absolute top-2 right-2 p-1.5 bg-black/80 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg"
+                title="Remove photo"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <label className="relative border-2 border-dashed border-[#262b3d] hover:border-[#d4af37]/60 bg-[#0d0e12] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors group">
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageUpload}
+                disabled={uploading}
+                className="hidden"
+              />
+              {uploading ? (
+                <div className="flex flex-col items-center gap-2 text-xs text-[#d4af37]">
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                  <span>Uploading image...</span>
+                </div>
+              ) : (
+                <>
+                  <div className="w-10 h-10 rounded-full bg-[#151821] flex items-center justify-center text-[#94a3b8] group-hover:text-[#d4af37] transition-colors">
+                    <Upload className="w-5 h-5" />
+                  </div>
+                  <div className="text-center">
+                    <span className="text-xs font-bold text-white block group-hover:text-[#d4af37] transition-colors">
+                      Click to upload perfume photo
+                    </span>
+                    <span className="text-[11px] text-[#64748b]">JPG, PNG, or WebP (Max 10MB)</span>
+                  </div>
+                </>
+              )}
+            </label>
+          )}
+
+          {uploadError && <p className="text-xs text-red-400 font-medium">{uploadError}</p>}
+        </div>
 
         {/* Perfume Name */}
         <FIELD label="Perfume Name *">
@@ -198,17 +297,6 @@ export default function AddNewPerfumePage() {
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={() => setStatus('DRAFT')}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${
-                status === 'DRAFT'
-                  ? 'bg-amber-500/15 text-amber-400 border-amber-500/40'
-                  : 'bg-[#151821] text-[#64748b] border-[#262b3d] hover:border-[#374151]'
-              }`}
-            >
-              Draft — Hidden from public
-            </button>
-            <button
-              type="button"
               onClick={() => setStatus('PUBLISHED')}
               className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${
                 status === 'PUBLISHED'
@@ -218,10 +306,18 @@ export default function AddNewPerfumePage() {
             >
               Published — Live on store
             </button>
+            <button
+              type="button"
+              onClick={() => setStatus('DRAFT')}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                status === 'DRAFT'
+                  ? 'bg-amber-500/15 text-amber-400 border-amber-500/40'
+                  : 'bg-[#151821] text-[#64748b] border-[#262b3d] hover:border-[#374151]'
+              }`}
+            >
+              Draft — Hidden from public
+            </button>
           </div>
-          <p className="text-[11px] text-[#64748b]">
-            You can publish anytime. Only published perfumes appear to customers.
-          </p>
         </div>
 
         {/* Submit */}
@@ -242,12 +338,6 @@ export default function AddNewPerfumePage() {
           </Link>
         </div>
       </form>
-
-      {/* Info note */}
-      <div className="bg-[#0d0e12] border border-[#262b3d] rounded-xl p-4 text-xs text-[#64748b] space-y-1">
-        <p className="font-bold text-[#94a3b8]">💡 After saving:</p>
-        <p>You'll be taken to the Edit page where you can assign a photo from your Media Library.</p>
-      </div>
     </div>
   );
 }

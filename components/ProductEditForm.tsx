@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Check } from 'lucide-react';
+import { ArrowLeft, Save, Check, Upload, Loader2, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 
 interface ProductFormProps {
@@ -32,8 +32,40 @@ export default function ProductEditForm({ product }: ProductFormProps) {
   const [gender, setGender] = useState(product.gender || 'Unisex');
   const [shortDescription, setShortDescription] = useState(product.shortDescription || '');
   const [status, setStatus] = useState(product.status);
+  const [currentImageUrl, setCurrentImageUrl] = useState(product.imageUrl || '/uploads/perfumes/perfume_db293e4b7fc0.jpeg');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    setUploadError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('productId', product.id);
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to upload image');
+
+      setCurrentImageUrl(data.media.url);
+      setMessage('Image uploaded and updated successfully!');
+      router.refresh();
+    } catch (err: any) {
+      setUploadError(err.message);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,12 +127,41 @@ export default function ProductEditForm({ product }: ProductFormProps) {
       <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-12 gap-8">
         {/* Left: Image preview & status */}
         <div className="md:col-span-4 space-y-4">
-          <div className="aspect-square bg-[#151821] border border-[#262b3d] rounded-2xl overflow-hidden p-2">
+          <div className="aspect-square bg-[#151821] border border-[#262b3d] rounded-2xl overflow-hidden p-2 relative group">
             <img
-              src={product.imageUrl || '/uploads/perfumes/perfume_db293e4b7fc0.jpeg'}
+              src={currentImageUrl}
               alt={product.name}
               className="w-full h-full object-cover rounded-xl"
             />
+          </div>
+
+          {/* Change / Upload Photo Button */}
+          <div className="bg-[#151821] p-4 rounded-xl border border-[#262b3d] space-y-2">
+            <label className="text-xs font-bold text-[#d4af37] uppercase block flex items-center gap-1.5">
+              <ImageIcon className="w-3.5 h-3.5" />
+              <span>Perfume Photo</span>
+            </label>
+            <label className="w-full py-2 px-3 bg-[#0d0e12] border border-[#262b3d] hover:border-[#d4af37]/60 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 cursor-pointer transition-colors">
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageUpload}
+                disabled={uploadingImage}
+                className="hidden"
+              />
+              {uploadingImage ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-[#d4af37]" />
+                  <span>Uploading...</span>
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 text-[#d4af37]" />
+                  <span>Upload / Replace Photo</span>
+                </>
+              )}
+            </label>
+            {uploadError && <p className="text-[11px] text-red-400 font-medium">{uploadError}</p>}
           </div>
 
           <div className="bg-[#151821] p-4 rounded-xl border border-[#262b3d] space-y-2">

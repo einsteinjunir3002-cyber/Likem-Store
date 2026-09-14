@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { formatGhs } from '@/lib/currency';
 import { Plus, Eye, AlertCircle, CheckCircle } from 'lucide-react';
+import DeleteProductButton from '@/components/DeleteProductButton';
 
 export const revalidate = 0;
 
@@ -36,7 +37,7 @@ export default async function AdminProductsPage() {
       <div className="bg-[#151821] border border-[#262b3d] rounded-2xl shadow-xl">
         {/* overflow-x-auto must be on a direct wrapper with no overflow:hidden ancestor */}
         <div className="overflow-x-auto rounded-2xl" style={{ WebkitOverflowScrolling: 'touch' }}>
-          <table className="text-left text-xs" style={{ minWidth: '660px', width: '100%' }}>
+          <table className="text-left text-xs" style={{ minWidth: '720px', width: '100%' }}>
             <thead className="bg-[#0d0e12] text-[#94a3b8] uppercase text-[10px] font-bold border-b border-[#262b3d]">
               <tr>
                 {/* Sticky Perfume column so users always know which product row they're on */}
@@ -45,16 +46,16 @@ export default async function AdminProductsPage() {
                 <th className="p-3" style={{ minWidth: '95px' }}>Price (GHS)</th>
                 <th className="p-3" style={{ minWidth: '75px' }}>Stock</th>
                 <th className="p-3" style={{ minWidth: '95px' }}>Status</th>
-                <th className="p-3 text-right" style={{ minWidth: '115px' }}>Actions</th>
+                <th className="p-3 text-right" style={{ minWidth: '175px' }}>Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1e2330]">
               {products.map((p) => {
                 const imgUrl = p.images[0]?.media?.url || '/uploads/perfumes/perfume_db293e4b7fc0.jpeg';
                 return (
-                  <tr key={p.id} className="hover:bg-[#1a1f2e] transition-colors">
+                  <tr key={p.id} className="hover:bg-[#1a1f2e] transition-colors group">
                     {/* Sticky product name cell */}
-                    <td className="p-3 sticky left-0 bg-[#151821] z-10 group-hover:bg-[#1a1f2e]">
+                    <td className="p-3 sticky left-0 bg-[#151821] group-hover:bg-[#1a1f2e] z-10 transition-colors">
                       <div className="flex items-center gap-2">
                         <div className="w-9 h-9 rounded-lg overflow-hidden bg-[#0d0e12] border border-[#262b3d] shrink-0">
                           <img src={imgUrl} alt="" className="w-full h-full object-cover" />
@@ -88,12 +89,12 @@ export default async function AdminProductsPage() {
                       )}
                     </td>
                     <td className="p-3 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1.5">
                         <Link
                           href={`/products/${p.slug}`}
                           target="_blank"
-                          className="p-1.5 text-[#94a3b8] hover:text-white transition-colors"
-                          title="Preview"
+                          className="p-1.5 text-[#94a3b8] hover:text-white transition-colors rounded-lg"
+                          title="Preview on store"
                         >
                           <Eye className="w-4 h-4" />
                         </Link>
@@ -101,8 +102,9 @@ export default async function AdminProductsPage() {
                           href={`/admin/products/edit/${p.id}`}
                           className="px-2.5 py-1 rounded-lg bg-[#d4af37]/20 text-[#d4af37] hover:bg-[#d4af37] hover:text-black font-semibold text-xs transition-colors whitespace-nowrap"
                         >
-                          Edit / Price
+                          Edit
                         </Link>
+                        <DeleteProductButton productId={p.id} productName={p.name} />
                       </div>
                     </td>
                   </tr>

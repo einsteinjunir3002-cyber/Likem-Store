@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, brandName, priceInGhs, stock, size, concentration, gender, shortDescription, status } = body;
+    const { name, brandName, priceInGhs, stock, size, concentration, gender, shortDescription, status, mediaId } = body;
 
     if (!name || !name.trim()) {
       return NextResponse.json({ error: 'Perfume name is required.' }, { status: 400 });
@@ -45,6 +45,17 @@ export async function POST(req: Request) {
         requiresInformation: parsedPrice <= 0 || parsedStock <= 0,
       },
     });
+
+    if (mediaId) {
+      await prisma.productImage.create({
+        data: {
+          productId: product.id,
+          mediaId,
+          isPrimary: true,
+          sortOrder: 0,
+        },
+      });
+    }
 
     return NextResponse.json({ success: true, product });
   } catch (err: any) {
