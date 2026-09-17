@@ -113,20 +113,44 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2. Save Media record in Supabase PostgreSQL
-    // If not on Supabase Storage, binary data is stored directly in Supabase Postgres (Media.data)
-    // and served via /api/media/[id] with CDN caching headers.
-    const media = await prisma.media.create({
-      data: {
-        filename,
-        originalName: file.name,
-        url: publicUrl || '/api/media/placeholder',
-        mimeType: file.type,
-        fileSize: file.size,
-        sha256,
-        data: buffer,
-      },
-    });
+    // Ensure data BYTEA column exists on the active database
+    try {
+      await prisma.$executeRawUnsafe('ALTER TABLE "Media" ADD COLUMN IF NOT EXISTS "data" BYTEA;');
+    } catch {
+      // ignore if already present or user lacks DDL
+    }
+
+    let media: any;
+    try {
+      media = await prisma.media.create({
+        data: {
+          filename,
+          originalName: file.name,
+          url: publicUrl || '/api/media/placeholder',
+          mimeType: file.type,
+          fileSize: file.size,
+          sha256,
+          data: buffer,
+        },
+      });
+    } catch (createErr: any) {
+      if (createErr?.message && createErr.message.includes('column `data` does not exist')) {
+        await prisma.$executeRawUnsafe('ALTER TABLE "Media" ADD COLUMN IF NOT EXISTS "data" BYTEA;');
+        media = await prisma.media.create({
+          data: {
+            filename,
+            originalName: file.name,
+            url: publicUrl || '/api/media/placeholder',
+            mimeType: file.type,
+            fileSize: file.size,
+            sha256,
+            data: buffer,
+          },
+        });
+      } else {
+        throw createErr;
+      }
+    }
 
     // Update URL to point to /api/media/[id] if not hosted on Supabase Storage
     if (!publicUrl) {
