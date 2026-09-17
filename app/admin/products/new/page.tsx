@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save, CheckCircle, AlertCircle, Sparkles, Upload, Image as ImageIcon, X, Loader2 } from 'lucide-react';
+import { optimizeImageForUpload } from '@/lib/optimize-image';
 
 const FIELD = ({ label, highlight, children }: { label: string; highlight?: boolean; children: React.ReactNode }) => (
   <div className="space-y-1.5">
@@ -34,6 +35,7 @@ export default function AddNewPerfumePage() {
   const [mediaId, setMediaId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string>('');
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,10 +43,15 @@ export default function AddNewPerfumePage() {
     if (!file) return;
     setUploading(true);
     setUploadError(null);
+    setUploadStatus('Optimizing photo...');
 
     try {
+      // Optimize photo on device before uploading (resizes large camera/gallery photos)
+      const optimizedFile = await optimizeImageForUpload(file);
+      setUploadStatus('Uploading to store...');
+
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', optimizedFile);
 
       const res = await fetch('/api/admin/upload', {
         method: 'POST',
@@ -60,6 +67,7 @@ export default function AddNewPerfumePage() {
       setUploadError(err.message);
     } finally {
       setUploading(false);
+      setUploadStatus('');
     }
   };
 
@@ -171,7 +179,7 @@ export default function AddNewPerfumePage() {
             <label className="relative border-2 border-dashed border-[#262b3d] hover:border-[#d4af37]/60 bg-[#0d0e12] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors group">
               <input
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/*"
                 onChange={handleImageUpload}
                 disabled={uploading}
                 className="hidden"
@@ -179,7 +187,7 @@ export default function AddNewPerfumePage() {
               {uploading ? (
                 <div className="flex flex-col items-center gap-2 text-xs text-[#d4af37]">
                   <Loader2 className="w-6 h-6 animate-spin" />
-                  <span>Uploading image...</span>
+                  <span>{uploadStatus || 'Uploading image...'}</span>
                 </div>
               ) : (
                 <>
@@ -190,7 +198,7 @@ export default function AddNewPerfumePage() {
                     <span className="text-xs font-bold text-white block group-hover:text-[#d4af37] transition-colors">
                       Click to upload perfume photo
                     </span>
-                    <span className="text-[11px] text-[#64748b]">JPG, PNG, or WebP (Max 10MB)</span>
+                    <span className="text-[11px] text-[#64748b]">Select from gallery, camera, or files (Max 10MB)</span>
                   </div>
                 </>
               )}

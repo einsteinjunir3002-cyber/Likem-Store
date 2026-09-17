@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Check, Upload, Loader2, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
+import { optimizeImageForUpload } from '@/lib/optimize-image';
 
 interface ProductFormProps {
   product: {
@@ -45,8 +46,11 @@ export default function ProductEditForm({ product }: ProductFormProps) {
     setUploadError('');
 
     try {
+      // Optimize photo on device before uploading (resizes large camera/gallery photos)
+      const optimizedFile = await optimizeImageForUpload(file);
+
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', optimizedFile);
       formData.append('productId', product.id);
 
       const res = await fetch('/api/admin/upload', {
@@ -144,7 +148,7 @@ export default function ProductEditForm({ product }: ProductFormProps) {
             <label className="w-full py-2 px-3 bg-[#0d0e12] border border-[#262b3d] hover:border-[#d4af37]/60 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 cursor-pointer transition-colors">
               <input
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/*"
                 onChange={handleImageUpload}
                 disabled={uploadingImage}
                 className="hidden"

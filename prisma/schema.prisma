@@ -172,6 +172,7 @@ model Media {
   height       Int?
   sha256       String         @unique
   altText      String?
+  data         Bytes?
   createdAt    DateTime       @default(now())
   
   productImages ProductImage[]
