@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
+import { getStoreSettings } from '@/lib/settings';
+import { getSafeProductBySlug } from '@/lib/catalog';
 import { formatGhs } from '@/lib/currency';
 import ProductClientActions from '@/components/ProductClientActions';
 import { Truck, ShieldCheck, ArrowLeft, Droplet, Sparkles, Wind, Clock } from 'lucide-react';
@@ -17,10 +19,7 @@ interface ProductPageProps {
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = await prisma.product.findUnique({
-    where: { slug },
-    include: { brand: true, images: { include: { media: true } } },
-  });
+  const product = await getSafeProductBySlug(slug);
 
   if (!product) {
     return { title: 'Fragrance Not Found | LIKEM Parfums' };
@@ -42,28 +41,28 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { slug } = await params;
 
-  const product = await prisma.product.findUnique({
-    where: { slug },
-    include: {
-      brand: true,
-      category: true,
-      images: {
-        include: { media: true },
-        orderBy: { sortOrder: 'asc' },
-      },
-    },
-  });
+  const product = await getSafeProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
 
-  const settings = await prisma.storeSettings.findUnique({ where: { id: 'default' } });
+  let settings = null;
+  try {
+    settings = await getStoreSettings();
+  } catch (e) {
+    settings = null;
+  }
 
-  const regions = await prisma.deliveryRegion.findMany({
-    where: { isActive: true },
-    orderBy: { baseFeeInGhs: 'asc' },
-  });
+  let regions: any[] = [];
+  try {
+    regions = await prisma.deliveryRegion.findMany({
+      where: { isActive: true },
+      orderBy: { baseFeeInGhs: 'asc' },
+    });
+  } catch (e) {
+    regions = [];
+  }
 
   const primaryImage = product.images[0]?.media?.url || '/uploads/perfumes/perfume_db293e4b7fc0.jpeg';
   const whatsappNumber = settings?.whatsappNumber || '233502547133';

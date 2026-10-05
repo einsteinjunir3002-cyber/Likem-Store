@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { getStoreSettings } from '@/lib/settings';
 import WishlistView from '@/components/WishlistView';
 
 export const revalidate = 0;
@@ -9,18 +10,28 @@ export const metadata = {
 };
 
 export default async function WishlistPage() {
-  const settings = await prisma.storeSettings.findUnique({ where: { id: 'default' } });
+  let settings = null;
+  try {
+    settings = await getStoreSettings();
+  } catch (e) {
+    settings = null;
+  }
 
-  const products = await prisma.product.findMany({
-    include: {
-      brand: true,
-      images: {
-        include: { media: true },
-        orderBy: { sortOrder: 'asc' },
+  let products: any[] = [];
+  try {
+    products = await prisma.product.findMany({
+      include: {
+        brand: true,
+        images: {
+          include: { media: true },
+          orderBy: { sortOrder: 'asc' },
+        },
       },
-    },
-    orderBy: [{ status: 'desc' }, { createdAt: 'desc' }],
-  });
+      orderBy: [{ status: 'desc' }, { createdAt: 'desc' }],
+    });
+  } catch (e) {
+    products = [];
+  }
 
   const serializedProducts = products.map((p) => ({
     id: p.id,

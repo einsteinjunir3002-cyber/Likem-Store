@@ -2,7 +2,9 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import StorefrontChrome from '@/components/StorefrontChrome';
-import { prisma } from '@/lib/prisma';
+import ThemeProvider from '@/components/ThemeProvider';
+import { getStoreSettings } from '@/lib/settings';
+import { generateThemeCSS } from '@/lib/theme';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://thelikemperfumery.vercel.app'),
@@ -37,7 +39,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#050508',
   colorScheme: 'dark',
 };
 
@@ -46,34 +47,35 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let settings = null;
-  try {
-    settings = await prisma.storeSettings.findUnique({
-      where: { id: 'default' },
-    });
-  } catch (e) {
-    // Graceful fallback during static build / momentary DB timeout
-    settings = null;
-  }
+  const settings = await getStoreSettings();
+  const themeCSS = generateThemeCSS(settings);
 
   return (
     <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <meta name="theme-color" content={settings.backgroundColor || '#050508'} />
+        <style
+          id="likem-dynamic-theme-css"
+          dangerouslySetInnerHTML={{ __html: themeCSS }}
+        />
       </head>
-      <body className="antialiased min-h-screen flex flex-col" style={{ background: '#050508' }}>
-        <CartProvider>
-          <StorefrontChrome
-            storeName={settings?.storeName}
-            phoneContact={settings?.phoneContact}
-            whatsappNumber={settings?.whatsappNumber}
-            snapchatHandle={settings?.snapchatHandle}
-          >
-            {children}
-          </StorefrontChrome>
-        </CartProvider>
+      <body className="antialiased min-h-screen flex flex-col" style={{ background: settings.backgroundColor || '#050508' }}>
+        <ThemeProvider initialConfig={settings}>
+          <CartProvider>
+            <StorefrontChrome
+              storeName={settings?.storeName}
+              phoneContact={settings?.phoneContact}
+              whatsappNumber={settings?.whatsappNumber}
+              snapchatHandle={settings?.snapchatHandle}
+            >
+              {children}
+            </StorefrontChrome>
+          </CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+

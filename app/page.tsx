@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
+import { getStoreSettings } from '@/lib/settings';
+import { getSafeProducts } from '@/lib/catalog';
 import { formatGhs } from '@/lib/currency';
 import {
   ShoppingBag,
@@ -49,23 +51,12 @@ export default async function HomePage() {
 
   let settings = null;
   try {
-    settings = await prisma.storeSettings.findUnique({
-      where: { id: 'default' },
-    });
+    settings = await getStoreSettings();
   } catch (e) {
     settings = null;
   }
 
-  const allProducts = await prisma.product.findMany({
-    include: {
-      brand: true,
-      images: {
-        include: { media: true },
-        orderBy: { sortOrder: 'asc' },
-      },
-    },
-    orderBy: [{ status: 'desc' }, { createdAt: 'desc' }],
-  });
+  const allProducts = await getSafeProducts();
 
   const storeName = settings?.storeName || 'The Likem Perfumery';
   const whatsappNumber = (settings?.whatsappNumber || '233502547133').replace(/[^0-9]/g, '');

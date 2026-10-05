@@ -1,0 +1,19 @@
+{
+  "id": "default",
+  "storeName": "The Likem Perfumery",
+  "tagline": "Authentic Luxury Fragrances in Ghana",
+  "phoneContact": "0502547133",
+  "whatsappNumber": "+233502547133",
+  "snapchatHandle": "lilitracess",
+  "onlineCheckoutEnabled": false,
+  "deliveryNotice": "Delivery fees depend on your exact location.",
+  "themePreset": "custom",
+  "primaryColor": "#06b6d4",
+  "secondaryColor": "#67e8f9",
+  "accentColor": "#0891b2",
+  "backgroundColor": "#ecfeff",
+  "cardColor": "#ffffff",
+  "currencyCode": "GHS",
+  "currencySymbol": "GH₵",
+  "customWhatsappTemplate": "Hello! I am interested in ordering {product_name} priced at {price}. Please confirm availability and delivery to my location."
+}

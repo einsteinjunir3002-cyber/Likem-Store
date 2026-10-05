@@ -1,14 +1,26 @@
 import { prisma } from '@/lib/prisma';
+import { getStoreSettings } from '@/lib/settings';
 import CartView from '@/components/CartView';
 
 export const revalidate = 0;
 
 export default async function CartPage() {
-  const settings = await prisma.storeSettings.findUnique({ where: { id: 'default' } });
-  const regions = await prisma.deliveryRegion.findMany({
-    where: { isActive: true },
-    orderBy: { baseFeeInGhs: 'asc' },
-  });
+  let settings = null;
+  try {
+    settings = await getStoreSettings();
+  } catch (e) {
+    settings = null;
+  }
+
+  let regions: any[] = [];
+  try {
+    regions = await prisma.deliveryRegion.findMany({
+      where: { isActive: true },
+      orderBy: { baseFeeInGhs: 'asc' },
+    });
+  } catch (e) {
+    regions = [];
+  }
 
   return (
     <CartView

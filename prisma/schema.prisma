@@ -321,6 +321,12 @@ model StoreSettings {
   storeStatus       StoreStatus @default(OPEN)
   deliveryNotice    String      @default("Delivery fees depend on your exact location. We arrange delivery across Accra, Kumasi and all regions.")
   customWhatsappTemplate String @default("Hello! I am interested in ordering {product_name} priced at {price}. Please confirm availability and delivery to my location.")
+  themePreset       String      @default("royal-gold")
+  primaryColor      String      @default("#d4af37")
+  secondaryColor    String      @default("#f5e4ab")
+  accentColor       String      @default("#b8902a")
+  backgroundColor   String      @default("#050508")
+  cardColor         String      @default("#0c0e18")
   updatedAt         DateTime    @updatedAt
 }
 

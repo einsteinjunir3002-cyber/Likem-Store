@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
+import { getStoreSettings } from '@/lib/settings';
+import { getSafeProducts } from '@/lib/catalog';
 import { formatGhs } from '@/lib/currency';
 import { Filter } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/SocialIcons';
@@ -17,23 +19,20 @@ interface ProductsPageProps {
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams;
-  const settings = await prisma.storeSettings.findUnique({ where: { id: 'default' } });
+  let settings = null;
+  try {
+    settings = await getStoreSettings();
+  } catch (e) {
+    settings = null;
+  }
 
-  const whereClause: any = {};
-  if (params.brand) whereClause.brand = { slug: params.brand };
-  if (params.gender) whereClause.gender = params.gender;
-
-  const products = await prisma.product.findMany({
-    where: whereClause,
-    include: {
-      brand: true,
-      images: {
-        include: { media: true },
-        orderBy: { sortOrder: 'asc' },
-      },
-    },
-    orderBy: [{ status: 'desc' }, { createdAt: 'desc' }],
-  });
+  let products = await getSafeProducts();
+  if (params.gender) {
+    products = products.filter((p) => (p.gender || '').toLowerCase() === params.gender?.toLowerCase());
+  }
+  if (params.brand) {
+    products = products.filter((p) => (p.brand?.slug || '').toLowerCase() === params.brand?.toLowerCase());
+  }
 
   const storeName = settings?.storeName || 'The Likem Perfumery';
   const whatsappNumber = (settings?.whatsappNumber || '233502547133').replace(/[^0-9]/g, '');
