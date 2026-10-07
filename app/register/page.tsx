@@ -298,8 +298,8 @@ export default function RegisterPage() {
               ============================================================ */}
           {step === 'VERIFY_OTP' && (
             <form onSubmit={completeRegistration} className="space-y-5">
-              {/* Instant Verification Notice */}
-              {previewOtp && (
+              {/* Email Sent Notice */}
+              {previewOtp ? (
                 <div className="p-4 bg-[#d4af37]/10 border border-[#d4af37]/35 rounded-2xl space-y-2 text-center">
                   <div className="text-[10px] uppercase font-bold text-[#f5e4ab] tracking-wider flex items-center justify-center gap-1.5">
                     <Sparkles className="w-3 h-3 text-[#d4af37]" />
@@ -313,6 +313,19 @@ export default function RegisterPage() {
                   </div>
                   <p className="text-[9px] text-[#94a3b8]">
                     Enter the code below to confirm this is your email address and activate your account.
+                  </p>
+                </div>
+              ) : (
+                <div className="p-4 bg-[#131622] border border-[#d4af37]/25 rounded-2xl space-y-1.5 text-center">
+                  <div className="text-[10px] uppercase font-bold text-[#d4af37] tracking-wider flex items-center justify-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>Check Your Email Inbox</span>
+                  </div>
+                  <p className="text-[11px] text-[#cbd5e1]">
+                    We have sent a 6-digit security verification code to <span className="text-white font-semibold">{email}</span>.
+                  </p>
+                  <p className="text-[10px] text-[#94a3b8]">
+                    Please enter the code below to verify your email and complete registration.
                   </p>
                 </div>
               )}
