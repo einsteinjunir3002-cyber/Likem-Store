@@ -70,8 +70,8 @@ export async function POST(req: Request) {
       message: `A 6-digit verification code has been sent to ${trimmedEmail}. Please check your inbox.`,
       token,
       expiresAt,
-      // Only include fallback previewCode in local dev if no Resend key is configured
-      previewCode: !process.env.RESEND_API_KEY ? code : undefined,
+      // Only include fallback previewCode strictly in local development if no Resend key is configured
+      previewCode: process.env.NODE_ENV !== 'production' && !process.env.RESEND_API_KEY ? code : undefined,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Failed to send OTP code' }, { status: 500 });

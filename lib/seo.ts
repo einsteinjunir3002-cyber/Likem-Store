@@ -9,8 +9,8 @@
  * (NEXT_PUBLIC_APP_URL, VERCEL_PROJECT_PRODUCTION_URL, and VERCEL_URL are also honoured.)
  */
 
-// Last-resort fallback: the primary canonical Vercel alias configured in vercel.json.
-const FALLBACK_SITE_URL = 'https://thelikemperfumery.vercel.app';
+// Primary production custom domain
+const FALLBACK_SITE_URL = 'https://www.thelikemperfumery.com';
 
 function normalizeUrl(raw: string | undefined): string | null {
   if (!raw) return null;

@@ -6,7 +6,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // 301 Redirect secondary Vercel alias to primary canonical domain to prevent duplicate indexing
+  // 301 Redirect secondary Vercel aliases to primary custom domain
   async redirects() {
     return [
       {
@@ -17,7 +17,18 @@ const nextConfig = {
             value: 'the-likem-perfumery.vercel.app',
           },
         ],
-        destination: 'https://thelikemperfumery.vercel.app/:path*',
+        destination: 'https://www.thelikemperfumery.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'thelikemperfumery.vercel.app',
+          },
+        ],
+        destination: 'https://www.thelikemperfumery.com/:path*',
         permanent: true,
       },
     ];
