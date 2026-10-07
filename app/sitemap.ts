@@ -2,9 +2,8 @@ import { MetadataRoute } from 'next';
 import { getSafeProducts } from '@/lib/catalog';
 import { absoluteUrl } from '@/lib/seo';
 
-// Revalidate every 1 hour (3600s) on Vercel's edge cache so crawls are lightning fast
-// while newly published products automatically refresh.
-export const revalidate = 3600;
+// Generate dynamically so changes to catalog or custom domain are reflected instantly
+export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let products: Awaited<ReturnType<typeof getSafeProducts>> = [];
