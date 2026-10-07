@@ -1,4 +1,6 @@
-# LIKEM Perfumes — Ghanaian Social-Commerce & E-Commerce Platform
+# The Likem Perfumery — Ghanaian Luxury Perfume Platform
+
+**Live Production Store:** [https://www.thelikemperfumery.com](https://www.thelikemperfumery.com)
 
 A production-ready, database-backed social-commerce and e-commerce web platform for an independent Ghanaian perfume seller marketing through WhatsApp Status and social media.
 
