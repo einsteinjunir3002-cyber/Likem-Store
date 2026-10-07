@@ -31,8 +31,6 @@ export function getSiteUrl(): string {
   return (
     normalizeUrl(process.env.NEXT_PUBLIC_SITE_URL) ||
     normalizeUrl(process.env.NEXT_PUBLIC_APP_URL) ||
-    normalizeUrl(process.env.VERCEL_PROJECT_PRODUCTION_URL) ||
-    normalizeUrl(process.env.VERCEL_URL) ||
     FALLBACK_SITE_URL
   );
 }
