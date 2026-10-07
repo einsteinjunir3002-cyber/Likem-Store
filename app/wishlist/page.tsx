@@ -7,6 +7,7 @@ export const revalidate = 0;
 export const metadata = {
   title: 'My Wishlist | The Likem Perfumery',
   description: 'Your saved luxury fragrances and personal scent wish list at The Likem Perfumery Ghana.',
+  robots: { index: false, follow: false },
 };
 
 export default async function WishlistPage() {

@@ -3,9 +3,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { getStoreSettings } from '@/lib/settings';
-import { getSafeProductBySlug } from '@/lib/catalog';
+import { getSafeProductBySlug, getSafeProducts } from '@/lib/catalog';
 import { formatGhs } from '@/lib/currency';
+import { absoluteUrl, breadcrumbJsonLd, truncate, DEFAULT_OG_IMAGE } from '@/lib/seo';
+import { getCurrentAdmin } from '@/lib/auth';
 import ProductClientActions from '@/components/ProductClientActions';
+import JsonLd from '@/components/JsonLd';
 import { Truck, ShieldCheck, ArrowLeft, Droplet, Sparkles, Wind, Clock } from 'lucide-react';
 import WishlistButton from '@/components/WishlistButton';
 
@@ -21,19 +24,60 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const { slug } = await params;
   const product = await getSafeProductBySlug(slug);
 
-  if (!product) {
-    return { title: 'Fragrance Not Found | LIKEM Parfums' };
+  if (!product || product.status !== 'PUBLISHED') {
+    return {
+      title: 'Fragrance Not Found | The Likem Perfumery',
+      robots: { index: false, follow: false },
+    };
   }
 
-  const primaryImage = product.images[0]?.media?.url || '/uploads/perfumes/perfume_db293e4b7fc0.jpeg';
+  const settings = await getStoreSettings();
+  const storeName = settings?.storeName || 'The Likem Perfumery';
+  const brandName = product.brand?.name;
+  const primaryImage = product.images[0]?.media?.url || DEFAULT_OG_IMAGE;
+  const isPublished = true;
+
+  // Prefer admin-entered SEO fields (they exist in the database schema) when present.
+  const title =
+    (product as any).seoTitle ||
+    (brandName ? `${product.name} by ${brandName} | ${storeName}` : `${product.name} | ${storeName}`);
+
+  const details = [product.size, product.concentration].filter(Boolean).join(' ');
+  const intro = product.shortDescription || product.description;
+  const description =
+    (product as any).seoDescription ||
+    truncate(
+      [
+        intro ? intro.trim() : `${product.name}${brandName ? ` by ${brandName}` : ''}${details ? `, ${details}` : ''}.`,
+        isPublished ? `${formatGhs(product.priceInGhs)}.` : '',
+        `Order from ${storeName} with delivery across Ghana.`,
+      ]
+        .filter(Boolean)
+        .join(' '),
+      160
+    );
+
+  const canonical = `/products/${product.slug}`;
 
   return {
-    title: `${product.name} | LIKEM Haute Parfumerie Ghana`,
-    description: `Acquire ${product.name} (${formatGhs(product.priceInGhs)}). Authentic perfume with prompt delivery across Ghana.`,
+    title: { absolute: title },
+    description,
+    alternates: { canonical },
+    // Draft / "coming soon" previews must not be indexed.
+    robots: isPublished ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: {
-      title: `${product.name} - ${formatGhs(product.priceInGhs)}`,
-      description: `Authentic fragrance delivered in Ghana. Order via WhatsApp or online.`,
-      images: [{ url: primaryImage }],
+      title,
+      description,
+      url: canonical,
+      type: 'website',
+      siteName: storeName,
+      images: [{ url: primaryImage, alt: `${product.name}${brandName ? ` by ${brandName}` : ''}` }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [primaryImage],
     },
   };
 }
@@ -45,6 +89,14 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   if (!product) {
     notFound();
+  }
+
+  const isPublished = product.status === 'PUBLISHED';
+  if (!isPublished) {
+    const admin = await getCurrentAdmin();
+    if (!admin) {
+      notFound();
+    }
   }
 
   let settings = null;
@@ -66,9 +118,63 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   const primaryImage = product.images[0]?.media?.url || '/uploads/perfumes/perfume_db293e4b7fc0.jpeg';
   const whatsappNumber = settings?.whatsappNumber || '233502547133';
+  const brandName = product.brand?.name;
+
+  // ---- Structured data (only real fields; nothing invented) ----
+  const productUrl = absoluteUrl(`/products/${product.slug}`);
+  const imageUrls = product.images.map((i) => i.media?.url).filter(Boolean).map((u) => absoluteUrl(u as string));
+  const productDescription = product.description || product.shortDescription || undefined;
+  const hasStockInfo = typeof product.stock === 'number';
+  const productJsonLd = isPublished
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        '@id': `${productUrl}#product`,
+        name: product.name,
+        url: productUrl,
+        ...(productDescription ? { description: productDescription } : {}),
+        image: imageUrls.length ? imageUrls : [absoluteUrl(primaryImage)],
+        ...(brandName ? { brand: { '@type': 'Brand', name: brandName } } : {}),
+        // Real identifiers only: use the stored SKU if one exists.
+        ...((product as any).sku ? { sku: (product as any).sku } : {}),
+        ...(product.category?.name ? { category: product.category.name } : {}),
+        offers: {
+          '@type': 'Offer',
+          url: productUrl,
+          priceCurrency: 'GHS',
+          price: Number(product.priceInGhs).toFixed(2),
+          availability:
+            hasStockInfo && (product.stock as number) <= 0
+              ? 'https://schema.org/OutOfStock'
+              : 'https://schema.org/InStock',
+          itemCondition: 'https://schema.org/NewCondition',
+          seller: { '@type': 'Organization', name: settings?.storeName || 'The Likem Perfumery' },
+        },
+      }
+    : null;
+
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Perfume Collection', path: '/products' },
+    { name: product.name, path: `/products/${product.slug}` },
+  ]);
+
+  // Internal links to related products (same brand first, then others).
+  let related: Array<{ name: string; slug: string }> = [];
+  try {
+    const others = (await getSafeProducts()).filter(
+      (p) => p.slug !== product.slug && p.status === 'PUBLISHED' && p.slug
+    );
+    const sameBrand = others.filter((p) => brandName && p.brand?.name === brandName);
+    const rest = others.filter((p) => !sameBrand.includes(p));
+    related = [...sameBrand, ...rest].slice(0, 6).map((p) => ({ name: p.name, slug: p.slug }));
+  } catch {
+    related = [];
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+      <JsonLd data={productJsonLd ? [breadcrumbs, productJsonLd] : [breadcrumbs]} />
       {/* Return to gallery navigation */}
       <div>
         <Link
@@ -87,7 +193,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#07080b]">
               <img
                 src={primaryImage}
-                alt={product.name}
+                alt={`${product.name}${brandName ? ` by ${brandName}` : ''} – ${[product.size, product.concentration].filter(Boolean).join(' ') || 'perfume'}`}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
               <div className="absolute top-4 right-4 z-20">
@@ -108,7 +214,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                   key={i}
                   className="w-24 h-24 rounded-2xl overflow-hidden border border-[#d4af37]/25 shrink-0 bg-[#07080b] p-1 glass-luxury"
                 >
-                  <img src={img.media.url} alt="" className="w-full h-full object-cover rounded-xl" />
+                  <img
+                    src={img.media.url}
+                    alt={(img.media as any).altText || `${product.name} – photo ${i + 1}`}
+                    loading="lazy"
+                    className="w-full h-full object-cover rounded-xl"
+                  />
                 </div>
               ))}
             </div>
@@ -196,6 +307,35 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         </div>
       </div>
+
+      {/* Related fragrances — crawlable internal links */}
+      {related.length > 0 && (
+        <nav aria-label="More fragrances" className="space-y-4 pt-8 border-t border-[#d4af37]/15">
+          <h2 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#94a3b8]">
+            More Fragrances
+          </h2>
+          <ul className="flex flex-wrap gap-2">
+            {related.map((r) => (
+              <li key={r.slug}>
+                <Link
+                  href={`/products/${r.slug}`}
+                  className="inline-block px-4 py-2 rounded-full text-xs font-semibold text-[#cbd5e1] bg-[#131622] border border-[#d4af37]/20 hover:text-white transition-colors"
+                >
+                  {r.name}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                href="/products"
+                className="inline-block px-4 py-2 rounded-full text-xs font-semibold text-[#d4af37] border border-[#d4af37]/30 hover:text-[#f5e4ab] transition-colors"
+              >
+                View Complete Collection
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      )}
     </div>
   );
 }

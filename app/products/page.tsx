@@ -1,13 +1,38 @@
 import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
+import type { Metadata } from 'next';
 import { getStoreSettings } from '@/lib/settings';
 import { getSafeProducts } from '@/lib/catalog';
 import { formatGhs } from '@/lib/currency';
+import { absoluteUrl, breadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo';
 import { Filter } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/SocialIcons';
 import WishlistButton from '@/components/WishlistButton';
+import JsonLd from '@/components/JsonLd';
 
 export const revalidate = 0;
+
+// Filtered views (?gender=, ?brand=, ?sort=) all canonicalize to /products so they
+// do not compete with the main collection page in search results.
+export const metadata: Metadata = {
+  title: { absolute: 'Perfume Collection | The Likem Perfumery Ghana' },
+  description:
+    'Browse the full collection of authentic perfumes at The Likem Perfumery — oriental, designer and unisex fragrances with prices in Ghana cedis, WhatsApp ordering and delivery across Ghana.',
+  alternates: { canonical: '/products' },
+  openGraph: {
+    title: 'Perfume Collection | The Likem Perfumery Ghana',
+    description:
+      'Authentic perfumes with prices in Ghana cedis, WhatsApp ordering and delivery across Ghana.',
+    url: '/products',
+    type: 'website',
+    images: [{ url: DEFAULT_OG_IMAGE, alt: 'Perfume collection at The Likem Perfumery' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Perfume Collection | The Likem Perfumery Ghana',
+    description: 'Authentic perfumes with prices in Ghana cedis and delivery across Ghana.',
+    images: [DEFAULT_OG_IMAGE],
+  },
+};
 
 interface ProductsPageProps {
   searchParams: Promise<{
@@ -26,7 +51,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     settings = null;
   }
 
-  let products = await getSafeProducts();
+  const allProducts = await getSafeProducts();
+  let products = allProducts.filter((p) => p.status === 'PUBLISHED');
   if (params.gender) {
     products = products.filter((p) => (p.gender || '').toLowerCase() === params.gender?.toLowerCase());
   }
@@ -37,8 +63,27 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const storeName = settings?.storeName || 'The Likem Perfumery';
   const whatsappNumber = (settings?.whatsappNumber || '233502547133').replace(/[^0-9]/g, '');
 
+  // Structured data lists only published products (same ones Google can index).
+  const listed = allProducts.filter((p) => p.status === 'PUBLISHED' && p.slug);
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${storeName} perfume collection`,
+    itemListElement: listed.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: absoluteUrl(`/products/${p.slug}`),
+      name: p.name,
+    })),
+  };
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Perfume Collection', path: '/products' },
+  ]);
+
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 sm:space-y-12">
+      <JsonLd data={[breadcrumbs, itemListJsonLd]} />
 
       {/* ── Page Header ── */}
       <div className="text-center space-y-2 sm:space-y-3 max-w-2xl mx-auto px-2">
@@ -95,7 +140,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
         {products.map((p) => {
           const primaryImage = p.images[0]?.media?.url || '/uploads/perfumes/perfume_db293e4b7fc0.jpeg';
-          const isPublished = p.status === 'PUBLISHED';
+          const isPublished = true;
 
           return (
             <div
@@ -110,7 +155,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 >
                   <img
                     src={primaryImage}
-                    alt={p.name}
+                    alt={p.brand?.name ? `${p.name} perfume by ${p.brand.name}` : `${p.name} perfume`}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110
                                transition-transform duration-700 ease-out"
                   />
@@ -146,10 +192,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     {p.gender || 'Unisex'} · {p.size || '100ml'}
                   </div>
                   <Link href={`/products/${p.slug}`}>
-                    <h3 className="font-serif-luxury text-base sm:text-xl lg:text-2xl text-white
+                    <h2 className="font-serif-luxury text-base sm:text-xl lg:text-2xl text-white
                                    group-hover:text-[#f5e4ab] transition-colors line-clamp-1">
                       {p.name}
-                    </h3>
+                    </h2>
                   </Link>
                   <p className="hidden sm:block text-[11px] text-[#64748b] line-clamp-2
                                 leading-relaxed font-light">
@@ -170,6 +216,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                     <Link
                       href={`/products/${p.slug}`}
+                      aria-label={`View details for ${p.name}`}
                       className="text-center py-2 px-1 sm:px-3 bg-[#161a26] hover:bg-[#202535]
                                  text-[#f1f5f9] text-[9px] sm:text-xs font-semibold tracking-wider
                                  rounded-lg sm:rounded-xl transition-colors border border-[#d4af37]/20"
@@ -177,6 +224,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                       Details
                     </Link>
                     <a
+                      aria-label={`${isPublished ? 'Order' : 'Ask about'} ${p.name} on WhatsApp`}
                       href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                         isPublished
                           ? `Hello! I would like to order ${p.name} from ${storeName} priced at ${formatGhs(p.priceInGhs)}. Please confirm availability for delivery.`

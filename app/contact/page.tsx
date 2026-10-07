@@ -45,7 +45,7 @@ export default function ContactPage() {
         {/* Contact info channels */}
         <div className="md:col-span-5 space-y-4">
           <div className="bg-[#151821] border border-[#262b3d] p-6 rounded-2xl space-y-6">
-            <h3 className="text-base font-bold text-white">Direct Channels</h3>
+            <h2 className="text-base font-bold text-white">Direct Channels</h2>
 
             <div className="space-y-4 text-xs">
               <a
@@ -109,7 +109,7 @@ export default function ContactPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <h3 className="text-base font-bold text-white">Send Us a Message</h3>
+                <h2 className="text-base font-bold text-white">Send Us a Message</h2>
 
                 <div className="space-y-1">
                   <label className="text-xs text-[#cbd5e1]">Your Name *</label>

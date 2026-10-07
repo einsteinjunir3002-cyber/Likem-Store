@@ -1,16 +1,15 @@
 import Link from 'next/link';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import type { Metadata } from 'next';
 import { getStoreSettings } from '@/lib/settings';
 import { getSafeProducts } from '@/lib/catalog';
 import { formatGhs } from '@/lib/currency';
+import { DEFAULT_OG_IMAGE } from '@/lib/seo';
 import {
   ShoppingBag,
   Sparkles,
   ArrowRight,
   Layers,
-  Star,
+  ShieldCheck,
   Truck,
   Shield,
   Phone,
@@ -20,6 +19,27 @@ import { WhatsAppIcon, SnapchatIcon } from '@/components/SocialIcons';
 import WishlistButton from '@/components/WishlistButton';
 
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: { absolute: 'The Likem Perfumery | Authentic Luxury Perfumes in Ghana' },
+  description:
+    'The Likem Perfumery is an online perfume boutique in Ghana. Shop authentic oriental, designer and rare extrait de parfum fragrances with WhatsApp ordering and delivery across Ghana.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'The Likem Perfumery | Authentic Luxury Perfumes in Ghana',
+    description:
+      'Authentic luxury fragrances with WhatsApp ordering and delivery across Ghana.',
+    url: '/',
+    type: 'website',
+    images: [{ url: DEFAULT_OG_IMAGE, alt: 'Fragrances from The Likem Perfumery' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'The Likem Perfumery | Authentic Luxury Perfumes in Ghana',
+    description: 'Authentic luxury fragrances with WhatsApp ordering and delivery across Ghana.',
+    images: [DEFAULT_OG_IMAGE],
+  },
+};
 
 const HERO_IMAGES = [
   '/uploads/perfumes/perfume_db293e4b7fc0.jpeg',
@@ -39,15 +59,7 @@ const MOSAIC_FALLBACKS = [
 ];
 
 export default async function HomePage() {
-  const cookieStore = await cookies();
-  const hasAccess =
-    cookieStore.has('likem_admin_token') ||
-    cookieStore.has('likem_customer_token') ||
-    cookieStore.has('likem_guest');
-
-  if (!hasAccess) {
-    redirect('/login');
-  }
+  // The homepage is public so that search engines (which carry no cookies) can crawl it.
 
   let settings = null;
   try {
@@ -57,6 +69,7 @@ export default async function HomePage() {
   }
 
   const allProducts = await getSafeProducts();
+  const publishedProducts = allProducts.filter((p) => p.status === 'PUBLISHED');
 
   const storeName = settings?.storeName || 'The Likem Perfumery';
   const whatsappNumber = (settings?.whatsappNumber || '233502547133').replace(/[^0-9]/g, '');
@@ -101,6 +114,7 @@ export default async function HomePage() {
               <div className="space-y-3 sm:space-y-5 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
                 <h1 className="font-serif-luxury leading-[1.06] tracking-tight text-white"
                   style={{ fontSize: 'clamp(2.5rem, 8vw, 5.5rem)' }}>
+                  <span className="sr-only">{storeName} — </span>
                   The Art of<br />
                   <span className="text-shimmer italic font-medium">Extraordinary</span>
                   <br />
@@ -149,7 +163,7 @@ export default async function HomePage() {
                   {[
                     { value: 'Curated', label: 'Originals' },
                     { value: 'GH₵', label: 'Direct Pricing' },
-                    { value: '24h', label: 'Nationwide' },
+                    { value: '24–48h', label: 'Dispatch' },
                   ].map((stat) => (
                     <div key={stat.label} className="space-y-1">
                       <div className="font-serif-luxury text-[#d4af37] font-light"
@@ -180,7 +194,7 @@ export default async function HomePage() {
                     style={{ aspectRatio: '3/4' }}>
                     <img
                       src={HERO_IMAGES[0]}
-                      alt="Featured Luxury Fragrance"
+                      alt="Tharwah Gold by Lattafa Pride, eau de parfum"
                       className="w-full h-full object-cover hover:scale-105
                                  transition-transform duration-[2000ms] ease-out"
                     />
@@ -226,7 +240,7 @@ export default async function HomePage() {
                                 glass-luxury rounded-2xl p-2 animate-float"
                   style={{ animationDelay: '1s', animationDuration: '5s' }}>
                   <div className="aspect-square rounded-xl overflow-hidden">
-                    <img src={HERO_IMAGES[1]} alt="Fragrance" className="w-full h-full object-cover" />
+                    <img src={HERO_IMAGES[1]} alt="" aria-hidden="true" className="w-full h-full object-cover" />
                   </div>
                 </div>
 
@@ -234,21 +248,17 @@ export default async function HomePage() {
                                 glass-luxury rounded-2xl p-2 animate-float"
                   style={{ animationDelay: '2s', animationDuration: '7s' }}>
                   <div className="aspect-square rounded-xl overflow-hidden">
-                    <img src={HERO_IMAGES[2]} alt="Fragrance" className="w-full h-full object-cover" />
+                    <img src={HERO_IMAGES[2]} alt="" aria-hidden="true" className="w-full h-full object-cover" />
                   </div>
                 </div>
 
-                {/* Stars badge — only on lg+ */}
+                {/* Authenticity Guarantee badge — only on lg+ */}
                 <div className="hidden lg:flex absolute top-1/2 -right-12 xl:-right-14
                                 glass-luxury-dark rounded-2xl px-3 xl:px-4 py-2.5 xl:py-3
                                 flex-col items-center gap-1 animate-gold-pulse">
-                  <div className="flex gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-2.5 h-2.5 text-[#d4af37] fill-[#d4af37]" />
-                    ))}
-                  </div>
-                  <div className="text-[9px] uppercase tracking-widest text-[#f5e4ab] font-bold">
-                    Top Rated
+                  <ShieldCheck className="w-5 h-5 text-[#d4af37]" />
+                  <div className="text-[9px] uppercase tracking-widest text-[#f5e4ab] font-bold text-center">
+                    100% Authentic
                   </div>
                 </div>
               </div>
@@ -289,11 +299,11 @@ export default async function HomePage() {
 
         {/* Products grid — 2 col mobile, 3 col tablet, 4 col desktop */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-7">
-          {allProducts.map((p, index) => {
+          {publishedProducts.map((p, index) => {
             const primaryImage =
               p.images[0]?.media?.url ||
               MOSAIC_FALLBACKS[index % MOSAIC_FALLBACKS.length];
-            const isPublished = p.status === 'PUBLISHED';
+            const isPublished = true;
 
             return (
               <div
@@ -306,7 +316,8 @@ export default async function HomePage() {
                   <Link href={`/products/${p.slug}`} className="block w-full h-full">
                     <img
                       src={primaryImage}
-                      alt={p.name}
+                      alt={p.brand?.name ? `${p.name} perfume by ${p.brand.name}` : `${p.name} perfume`}
+                      loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-110
                                  transition-transform duration-700 ease-out"
                     />
@@ -385,6 +396,7 @@ export default async function HomePage() {
                     <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                       <Link
                         href={`/products/${p.slug}`}
+                        aria-label={`View details for ${p.name}`}
                         className="text-center py-2 sm:py-2.5 px-1 sm:px-2
                                    bg-[#0e111a] hover:bg-[#161b28] text-[#e2e8f0]
                                    text-[9px] sm:text-[10px] font-semibold tracking-wider
@@ -394,6 +406,7 @@ export default async function HomePage() {
                         Details
                       </Link>
                       <a
+                        aria-label={`${isPublished ? 'Order' : 'Ask about'} ${p.name} on WhatsApp`}
                         href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                           isPublished
                             ? `Hello! I would like to order *${p.name}* from ${storeName} priced at ${formatGhs(p.priceInGhs)}. Please confirm availability and delivery.`
@@ -538,7 +551,7 @@ export default async function HomePage() {
             WebkitOverflowScrolling: 'touch',
           }}
         >
-          {[...allProducts, ...allProducts].map((p, i) => {
+          {[...publishedProducts, ...publishedProducts].map((p, i) => {
             const img = p.images[0]?.media?.url || MOSAIC_FALLBACKS[i % MOSAIC_FALLBACKS.length];
             return (
               <Link

@@ -1,9 +1,16 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { formatGhs } from '@/lib/currency';
 import { Search } from 'lucide-react';
 
 export const revalidate = 0;
+
+// Internal search results are thin, unlimited URLs — keep them out of the index.
+export const metadata: Metadata = {
+  title: 'Search Perfumes | The Likem Perfumery',
+  robots: { index: false, follow: true },
+};
 
 interface SearchPageProps {
   searchParams: Promise<{
@@ -15,8 +22,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
   const query = (params.q || '').trim();
 
-  const products = query
-    ? await prisma.product.findMany({
+  let products: any[] = [];
+  if (query) {
+    try {
+      products = await prisma.product.findMany({
         where: {
           status: 'PUBLISHED',
           OR: [
@@ -30,8 +39,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           brand: true,
           images: { include: { media: true } },
         },
-      })
-    : [];
+      });
+    } catch {
+      products = [];
+    }
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">

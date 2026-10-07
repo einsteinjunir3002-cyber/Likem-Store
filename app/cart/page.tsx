@@ -1,8 +1,14 @@
 import { prisma } from '@/lib/prisma';
 import { getStoreSettings } from '@/lib/settings';
 import CartView from '@/components/CartView';
+import type { Metadata } from 'next';
 
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: 'Your Shopping Bag | The Likem Perfumery',
+  robots: { index: false, follow: false },
+};
 
 export default async function CartPage() {
   let settings = null;

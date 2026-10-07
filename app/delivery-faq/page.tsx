@@ -1,21 +1,82 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
+import { getStoreSettings } from '@/lib/settings';
 import { formatGhs } from '@/lib/currency';
+import { breadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo';
+import JsonLd from '@/components/JsonLd';
 import { Truck, MessageCircle, Clock, ShieldCheck } from 'lucide-react';
 
 export const revalidate = 0;
 
+export const metadata: Metadata = {
+  title: { absolute: 'Delivery Guide & Ordering FAQ | The Likem Perfumery Ghana' },
+  description:
+    'How to order perfume from The Likem Perfumery: WhatsApp ordering, payment options, delivery fees and timelines across Ghana, and what to check on delivery.',
+  alternates: { canonical: '/delivery-faq' },
+  openGraph: {
+    title: 'Delivery Guide & Ordering FAQ | The Likem Perfumery Ghana',
+    description:
+      'WhatsApp ordering, payment options, delivery fees and timelines across Ghana.',
+    url: '/delivery-faq',
+    type: 'website',
+    images: [{ url: DEFAULT_OG_IMAGE, alt: 'The Likem Perfumery' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Delivery Guide & Ordering FAQ | The Likem Perfumery Ghana',
+    description: 'WhatsApp ordering, payment options, delivery fees and timelines across Ghana.',
+    images: [DEFAULT_OG_IMAGE],
+  },
+};
+
+// Kept in one place so the visible FAQ and the FAQPage structured data always match.
+const FAQS = [
+  {
+    q: 'How do I order on WhatsApp?',
+    a: 'When you browse a perfume on our website, simply tap the green "Order on WhatsApp" button. It automatically opens WhatsApp on your phone with the product name and price filled out so you can immediately chat with the seller.',
+  },
+  {
+    q: 'How do I pay?',
+    a: 'For WhatsApp orders, payment is confirmed directly with the seller via Mobile Money (MTN MoMo, Telecel Cash) or cash on delivery where agreed in Accra. For online orders, checkout can be processed directly on the website.',
+  },
+  {
+    q: 'Can I inspect the perfume when delivered?',
+    a: 'Yes. Every photograph displayed on this website is taken of the physical stock. You can inspect your package upon delivery to ensure it matches the scent ordered.',
+  },
+];
+
 export default async function DeliveryFaqPage() {
-  const settings = await prisma.storeSettings.findUnique({ where: { id: 'default' } });
-  const regions = await prisma.deliveryRegion.findMany({
-    where: { isActive: true },
-    orderBy: { baseFeeInGhs: 'asc' },
-  });
+  const settings = await getStoreSettings();
+  let regions: Awaited<ReturnType<typeof prisma.deliveryRegion.findMany>> = [];
+  try {
+    regions = await prisma.deliveryRegion.findMany({
+      where: { isActive: true },
+      orderBy: { baseFeeInGhs: 'asc' },
+    });
+  } catch {
+    regions = [];
+  }
 
   const whatsappNumber = (settings?.whatsappNumber || '233502547133').replace(/[^0-9]/g, '');
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Delivery Guide & FAQ', path: '/delivery-faq' },
+  ]);
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+      <JsonLd data={[breadcrumbs, faqJsonLd]} />
       {/* Title */}
       <div className="space-y-3 text-center">
         <span className="text-xs font-bold uppercase tracking-widest text-[#d4af37]">
@@ -74,26 +135,12 @@ export default async function DeliveryFaqPage() {
         <h2 className="text-xl font-bold text-white">Frequently Asked Questions</h2>
 
         <div className="space-y-3">
-          <div className="bg-[#151821] border border-[#262b3d] p-5 rounded-xl space-y-2">
-            <h3 className="text-sm sm:text-base font-bold text-white">How do I order on WhatsApp?</h3>
-            <p className="text-xs text-[#94a3b8] leading-relaxed">
-              When you browse a perfume on our website, simply tap the green &quot;Order on WhatsApp&quot; button. It automatically opens WhatsApp on your phone with the product name and price filled out so you can immediately chat with the seller.
-            </p>
-          </div>
-
-          <div className="bg-[#151821] border border-[#262b3d] p-5 rounded-xl space-y-2">
-            <h3 className="text-sm sm:text-base font-bold text-white">How do I pay?</h3>
-            <p className="text-xs text-[#94a3b8] leading-relaxed">
-              For WhatsApp orders, payment is confirmed directly with the seller via Mobile Money (MTN MoMo, Telecel Cash) or cash on delivery where agreed in Accra. For online orders, checkout can be processed directly on the website.
-            </p>
-          </div>
-
-          <div className="bg-[#151821] border border-[#262b3d] p-5 rounded-xl space-y-2">
-            <h3 className="text-sm sm:text-base font-bold text-white">Can I inspect the perfume when delivered?</h3>
-            <p className="text-xs text-[#94a3b8] leading-relaxed">
-              Yes. Every photograph displayed on this website is taken of the physical stock. You can inspect your package upon delivery to ensure it matches the scent ordered.
-            </p>
-          </div>
+          {FAQS.map((f) => (
+            <div key={f.q} className="bg-[#151821] border border-[#262b3d] p-5 rounded-xl space-y-2">
+              <h3 className="text-sm sm:text-base font-bold text-white">{f.q}</h3>
+              <p className="text-xs text-[#94a3b8] leading-relaxed">{f.a}</p>
+            </div>
+          ))}
         </div>
       </div>
 
