@@ -327,6 +327,7 @@ model StoreSettings {
   accentColor       String      @default("#b8902a")
   backgroundColor   String      @default("#050508")
   cardColor         String      @default("#0c0e18")
+  bannerImageUrl    String?     @default("/uploads/perfumes/perfume_db293e4b7fc0.jpeg")
   updatedAt         DateTime    @updatedAt
 }
 

@@ -20,6 +20,7 @@ export interface StoreSettingsData {
   currencyCode?: string;
   currencySymbol?: string;
   customWhatsappTemplate?: string;
+  bannerImageUrl?: string;
 }
 
 const DEFAULT_SETTINGS: StoreSettingsData = {
@@ -40,6 +41,7 @@ const DEFAULT_SETTINGS: StoreSettingsData = {
   currencyCode: 'GHS',
   currencySymbol: 'GH₵',
   customWhatsappTemplate: 'Hello! I am interested in ordering {product_name} priced at {price}. Please confirm availability and delivery to my location.',
+  bannerImageUrl: '/uploads/perfumes/perfume_hero_angham.jpg',
 };
 
 function getFallbackFilePath(): string {
@@ -98,6 +100,7 @@ export async function getStoreSettings(): Promise<StoreSettingsData> {
         accentColor: (dbSettings as any).accentColor || fallback.accentColor || '#b8902a',
         backgroundColor: (dbSettings as any).backgroundColor || fallback.backgroundColor || '#050508',
         cardColor: (dbSettings as any).cardColor || fallback.cardColor || '#0c0e18',
+        bannerImageUrl: (dbSettings as any).bannerImageUrl || fallback.bannerImageUrl || '/uploads/perfumes/perfume_hero_angham.jpg',
       };
     }
   } catch (err) {
@@ -127,6 +130,7 @@ export async function updateStoreSettings(data: Partial<StoreSettingsData>): Pro
         ...((data.accentColor !== undefined ? { accentColor: data.accentColor } : {}) as any),
         ...((data.backgroundColor !== undefined ? { backgroundColor: data.backgroundColor } : {}) as any),
         ...((data.cardColor !== undefined ? { cardColor: data.cardColor } : {}) as any),
+        ...((data.bannerImageUrl !== undefined ? { bannerImageUrl: data.bannerImageUrl } : {}) as any),
       },
       create: {
         id: 'default',
@@ -143,6 +147,7 @@ export async function updateStoreSettings(data: Partial<StoreSettingsData>): Pro
         ...((data.accentColor !== undefined ? { accentColor: data.accentColor } : {}) as any),
         ...((data.backgroundColor !== undefined ? { backgroundColor: data.backgroundColor } : {}) as any),
         ...((data.cardColor !== undefined ? { cardColor: data.cardColor } : {}) as any),
+        ...((data.bannerImageUrl !== undefined ? { bannerImageUrl: data.bannerImageUrl } : {}) as any),
       },
     });
     return { ...updatedFallback, ...updated };

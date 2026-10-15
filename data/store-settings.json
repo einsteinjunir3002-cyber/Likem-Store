@@ -15,5 +15,6 @@
   "cardColor": "#ffffff",
   "currencyCode": "GHS",
   "currencySymbol": "GH₵",
-  "customWhatsappTemplate": "Hello! I am interested in ordering {product_name} priced at {price}. Please confirm availability and delivery to my location."
+  "customWhatsappTemplate": "Hello! I am interested in ordering {product_name} priced at {price}. Please confirm availability and delivery to my location.",
+  "bannerImageUrl": "/uploads/perfumes/perfume_hero_angham.jpg"
 }

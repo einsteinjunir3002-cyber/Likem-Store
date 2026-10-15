@@ -27,6 +27,7 @@ export async function PUT(req: Request) {
       accentColor,
       backgroundColor,
       cardColor,
+      bannerImageUrl,
     } = body;
 
     const updated = await updateStoreSettings({
@@ -43,6 +44,7 @@ export async function PUT(req: Request) {
       accentColor,
       backgroundColor,
       cardColor,
+      bannerImageUrl,
     });
 
     return NextResponse.json({ success: true, settings: updated });

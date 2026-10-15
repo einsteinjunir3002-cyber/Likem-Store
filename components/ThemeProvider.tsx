@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { generateThemeCSS, ThemeConfig } from '@/lib/theme';
 
 export const THEME_CHANGE_EVENT = 'likem:theme-change';
@@ -17,21 +17,16 @@ interface ThemeProviderProps {
 }
 
 export default function ThemeProvider({ initialConfig, children }: ThemeProviderProps) {
+  const [css, setCss] = useState<string>(() => generateThemeCSS(initialConfig));
+
   useEffect(() => {
-    const applyCSS = (config: ThemeConfig) => {
-      let styleTag = document.getElementById('likem-dynamic-theme-css') as HTMLStyleElement | null;
-      if (!styleTag) {
-        styleTag = document.createElement('style');
-        styleTag.id = 'likem-dynamic-theme-css';
-        document.head.appendChild(styleTag);
-      }
-      styleTag.textContent = generateThemeCSS(config);
-    };
+    // Set initially
+    setCss(generateThemeCSS(initialConfig));
 
     const handleThemeEvent = (e: Event) => {
       const customEvent = e as CustomEvent<ThemeConfig>;
       if (customEvent.detail) {
-        applyCSS(customEvent.detail);
+        setCss(generateThemeCSS(customEvent.detail));
       }
     };
 
@@ -39,7 +34,15 @@ export default function ThemeProvider({ initialConfig, children }: ThemeProvider
     return () => {
       window.removeEventListener(THEME_CHANGE_EVENT, handleThemeEvent);
     };
-  }, []);
+  }, [initialConfig]);
 
-  return <>{children}</>;
+  return (
+    <>
+      <style
+        id="likem-dynamic-theme-css"
+        dangerouslySetInnerHTML={{ __html: css }}
+      />
+      {children}
+    </>
+  );
 }

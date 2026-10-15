@@ -447,18 +447,99 @@ header > div:first-child {
   border-color: ${t.dark} !important;
 }
 
-/* Frosted Glass Cards on Clear Background */
+/* All dark admin cards, containers & panels turn into luxury crisp white cards on clear themes */
 .glass-luxury,
 .glass-luxury-dark,
 .glass-luxury-card,
+.bg-\\[\\#151821\\],
+.bg-\\[\\#12151e\\],
+.bg-\\[\\#181c26\\],
+.bg-\\[\\#181c28\\],
+.bg-\\[\\#0e1017\\],
 .bg-\\[\\#0c0e18\\],
-.bg-\\[\\#050508\\],
-.bg-\\[\\#080a10\\],
-.bg-\\[\\#10121e\\] {
-  background: rgba(255, 255, 255, 0.90) !important;
-  border-color: rgba(${r}, ${g}, ${b}, 0.18) !important;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+.bg-\\[\\#10121e\\],
+.bg-\\[\\#131620\\],
+.bg-\\[\\#1a2333\\],
+.bg-\\[\\#1b202e\\],
+.bg-\\[\\#252c3f\\],
+.bg-\\[\\#151821\\]\\/95 {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 18px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03) !important;
   color: #0f172a !important;
+}
+
+/* Sub-panels and table rows in admin cards */
+.bg-\\[\\#0d0e12\\],
+.bg-\\[\\#151821\\] .bg-\\[\\#0d0e12\\],
+.bg-\\[\\#12151e\\] .bg-\\[\\#0d0e12\\],
+.bg-\\[\\#151821\\] .bg-\\[\\#0e1017\\],
+.bg-\\[\\#12151e\\] .bg-\\[\\#181c28\\],
+.bg-\\[\\#12151e\\] .bg-\\[\\#181c26\\] {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Borders in admin */
+.border-\\[\\#262b3d\\],
+.border-\\[\\#1e2330\\],
+.border-\\[\\#2e374f\\],
+.border-\\[\\#3e4866\\],
+.border-\\[\\#38415c\\] {
+  border-color: #e2e8f0 !important;
+}
+
+/* Text colors in admin on light backgrounds: avoid white text or pale grey on light canvas! */
+main h1,
+main h2,
+main h3,
+main .text-white,
+.bg-\\[\\#151821\\] .text-white,
+.bg-\\[\\#12151e\\] .text-white,
+.bg-\\[\\#0e1017\\] .text-white,
+.bg-\\[\\#181c28\\] .text-white,
+.bg-\\[\\#181c26\\] .text-white {
+  color: #0f172a !important;
+}
+
+main [class*="text-[#94a3b8]"],
+main [class*="text-[#cbd5e1]"],
+main [class*="text-[#64748b]"],
+.bg-\\[\\#151821\\] [class*="text-[#94a3b8]"],
+.bg-\\[\\#151821\\] [class*="text-[#cbd5e1]"],
+.bg-\\[\\#12151e\\] [class*="text-[#94a3b8]"],
+.bg-\\[\\#12151e\\] [class*="text-[#cbd5e1]"] {
+  color: #475569 !important;
+}
+
+/* Admin inputs, textareas, selects */
+main input:not([type="checkbox"]):not([type="radio"]),
+main select,
+main textarea,
+.input-luxury {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+main input::placeholder,
+main textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Homepage Hero: Text in front of the background perfume banner MUST stay crisp luminous white */
+section.relative .text-white,
+section.relative h1,
+section.relative h1 span,
+section.relative [class*="text-[#e2e8f0]"],
+section.relative .badge-gold,
+section.relative .btn-gold-luxury {
+  color: #ffffff !important;
+}
+
+section.relative [class*="text-[#cbd5e1]"] {
+  color: #cbd5e1 !important;
 }
 
 .glass-luxury-card:hover {
@@ -469,21 +550,6 @@ header > div:first-child {
 
 .glass-luxury-card::before {
   background: linear-gradient(90deg, transparent 0%, rgba(${r}, ${g}, ${b}, 0.35) 50%, transparent 100%) !important;
-}
-
-/* Inputs on Clear Background */
-input,
-select,
-textarea,
-.input-luxury {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  border-color: rgba(0, 0, 0, 0.14) !important;
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: #94a3b8 !important;
 }
 
 /* Mobile Bottom Navigation Bar on Clear Background */

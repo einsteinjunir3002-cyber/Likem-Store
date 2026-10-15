@@ -76,199 +76,116 @@ export default async function HomePage() {
   const phoneContact = settings?.phoneContact || '0502547133';
   const snapchatHandle = settings?.snapchatHandle || 'lilitracess';
 
+  const bannerImage = settings?.bannerImageUrl || '/uploads/perfumes/perfume_hero_angham.jpg';
+
   return (
     <div className="overflow-x-hidden">
 
       {/* ==================================================================
-          HERO — Mobile-first grand entrance
+          HERO — 100% Perfume Background Banner (PerfumePlug Style)
           ================================================================== */}
-      <section className="relative flex items-center justify-center overflow-hidden"
-        style={{ minHeight: 'min(100svh, 900px)' }}>
+      <section className="relative w-full min-h-[640px] sm:min-h-[720px] lg:min-h-[800px] flex items-center justify-center overflow-hidden bg-[#050508]">
 
-        {/* Background layers */}
-        <div className="absolute inset-0 bg-[#050508]" />
-        <div className="hero-glow-top" />
-        <div className="hero-glow-right" />
-        <div className="absolute inset-0 pointer-events-none opacity-30"
-          style={{
-            backgroundImage: `radial-gradient(circle at 20% 50%, rgba(212,175,55,0.04) 0%, transparent 50%),
-                              radial-gradient(circle at 80% 20%, rgba(212,175,55,0.03) 0%, transparent 40%)`,
-          }}
-        />
+        {/* ── Full-width Perfume Picture in the Background (100% pic in 100% banner dimensions) ── */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <img
+            src={bannerImage}
+            alt="Luxury Fragrance Banner"
+            className="w-full h-full object-cover object-center transition-all duration-700"
+          />
+          {/* Subtle luxury overlay - perfume photo is 100% vibrant & clearly visible, not pitch black */}
+          <div className="absolute inset-0 bg-black/35" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/90 via-transparent to-[#050508]/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/30" />
+        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative z-10 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+        {/* ── Ambient Glows ── */}
+        <div className="hero-glow-top z-[1]" />
+        <div className="hero-glow-right z-[1]" />
 
-            {/* ── Text Column ── */}
-            <div className="lg:col-span-6 xl:col-span-7 space-y-6 sm:space-y-8 text-center lg:text-left">
+        {/* ── Texts in Front of the Banner Image ── */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 pt-24 sm:pt-32 w-full text-center flex flex-col items-center">
+          <div className="space-y-6 sm:space-y-8 max-w-2xl mx-auto">
 
-              {/* Eyebrow badge */}
-              <div className="inline-flex items-center gap-2 badge-gold animate-fadeIn">
-                <Sparkles className="w-3 h-3 text-[#d4af37] flex-shrink-0" />
-                <span className="hidden sm:inline">Haute Parfumerie · {storeName}</span>
-                <span className="sm:hidden">{storeName}</span>
-                <Sparkles className="w-3 h-3 text-[#d4af37] flex-shrink-0" />
-              </div>
-
-              {/* Headline — responsive font sizes */}
-              <div className="space-y-3 sm:space-y-5 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-                <h1 className="font-serif-luxury leading-[1.06] tracking-tight text-white"
-                  style={{ fontSize: 'clamp(2.5rem, 8vw, 5.5rem)' }}>
-                  <span className="sr-only">{storeName} — </span>
-                  The Art of<br />
-                  <span className="text-shimmer italic font-medium">Extraordinary</span>
-                  <br />
-                  <span className="text-white/90">Fragrance.</span>
-                </h1>
-                <p className="text-sm sm:text-base text-[#94a3b8] leading-relaxed font-light
-                              max-w-sm sm:max-w-xl mx-auto lg:mx-0">
-                  Authentic oriental luxury, iconic designer compositions, and rare extraits de
-                  parfum — curated for the discerning fragrance lover with nationwide delivery
-                  across Ghana.
-                </p>
-              </div>
-
-              {/* CTA Buttons — generalized without hardcoded count */}
-              <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 justify-center lg:justify-start
-                              animate-fadeInUp"
-                style={{ animationDelay: '0.2s' }}>
-                <Link
-                  href="/products"
-                  className="btn-gold-luxury inline-flex items-center justify-center gap-2.5
-                             px-6 sm:px-9 py-3.5 sm:py-4 rounded-full text-[11px] w-full xs:w-auto"
-                >
-                  <ShoppingBag className="w-4 h-4 stroke-2 flex-shrink-0" />
-                  <span>Explore Fragrances</span>
-                  <ArrowRight className="w-3.5 h-3.5 stroke-[2.5] flex-shrink-0" />
-                </Link>
-
-                <a
-                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-                    `Hello! I am admiring your fragrance collection on ${storeName} and would like to place an order.`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-outline-luxury inline-flex items-center justify-center gap-2.5
-                             px-6 sm:px-9 py-3.5 sm:py-4 rounded-full text-[11px] w-full xs:w-auto"
-                >
-                  <WhatsAppIcon className="w-4 h-4 text-[#25D366] flex-shrink-0" />
-                  <span>Connect on WhatsApp</span>
-                </a>
-              </div>
-
-              {/* Trust stats */}
-              <div className="pt-4 sm:pt-8 animate-fadeInUp" style={{ animationDelay: '0.35s' }}>
-                <div className="gold-divider mb-5 sm:mb-8" />
-                <div className="grid grid-cols-3 gap-3 sm:gap-6 text-center lg:text-left">
-                  {[
-                    { value: 'Curated', label: 'Originals' },
-                    { value: 'GH₵', label: 'Direct Pricing' },
-                    { value: '24–48h', label: 'Dispatch' },
-                  ].map((stat) => (
-                    <div key={stat.label} className="space-y-1">
-                      <div className="font-serif-luxury text-[#d4af37] font-light"
-                        style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
-                        {stat.value}
-                      </div>
-                      <div className="text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em]
-                                      uppercase text-[#64748b]">
-                        {stat.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            {/* Eyebrow badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase border border-[#d4af37]/40 bg-black/50 backdrop-blur-md text-[#f5e4ab] shadow-lg animate-fadeIn">
+              <Sparkles className="w-3.5 h-3.5 text-[#d4af37] flex-shrink-0" />
+              <span>Haute Parfumerie · {storeName}</span>
+              <Sparkles className="w-3.5 h-3.5 text-[#d4af37] flex-shrink-0" />
             </div>
 
-            {/* ── Hero Image (hidden on small phones, shown from sm up) ── */}
-            <div className="hidden sm:flex lg:col-span-6 xl:col-span-5 justify-center lg:justify-end
-                            animate-fadeIn"
-              style={{ animationDelay: '0.25s' }}>
-              <div className="relative w-full max-w-[280px] sm:max-w-[320px] lg:max-w-none lg:w-[380px] xl:w-[420px]">
+            {/* Headline */}
+            <div className="space-y-3 sm:space-y-5 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+              <h1 className="font-serif-luxury leading-[1.06] tracking-tight text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]"
+                style={{ fontSize: 'clamp(2.5rem, 7.5vw, 5.25rem)' }}>
+                <span className="sr-only">{storeName} — </span>
+                The Art of<br />
+                <span className="text-shimmer italic font-medium">Extraordinary</span>
+                <br />
+                <span className="text-white">Fragrance.</span>
+              </h1>
+              <p className="text-sm sm:text-base text-slate-100/95 leading-relaxed font-light max-w-xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+                Authentic oriental luxury, iconic designer compositions, and rare extraits de
+                parfum — curated for the discerning fragrance lover with nationwide delivery
+                across Ghana.
+              </p>
+            </div>
 
-                {/* Main image card */}
-                <div className="relative rounded-3xl overflow-hidden glass-luxury p-2 sm:p-2.5
-                                animate-float"
-                  style={{ animationDuration: '6s' }}>
-                  <div className="relative rounded-2xl overflow-hidden bg-[#080a10]"
-                    style={{ aspectRatio: '3/4' }}>
-                    <img
-                      src={HERO_IMAGES[0]}
-                      alt="Tharwah Gold by Lattafa Pride, eau de parfum"
-                      className="w-full h-full object-cover hover:scale-105
-                                 transition-transform duration-[2000ms] ease-out"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#050508]
-                                    via-[#050508]/20 to-transparent" />
+            {/* CTA Buttons */}
+            <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 justify-center items-center animate-fadeInUp"
+              style={{ animationDelay: '0.2s' }}>
+              <Link
+                href="/products"
+                className="btn-gold-luxury inline-flex items-center justify-center gap-2.5 px-7 sm:px-9 py-3.5 sm:py-4 rounded-full text-[11px] font-bold uppercase tracking-wider w-full xs:w-auto shadow-xl"
+              >
+                <ShoppingBag className="w-4 h-4 stroke-2 flex-shrink-0" />
+                <span>Explore Fragrances</span>
+                <ArrowRight className="w-3.5 h-3.5 stroke-[2.5] flex-shrink-0" />
+              </Link>
 
-                    {/* Product plaque */}
-                    <div className="absolute bottom-3 left-3 right-3 glass-luxury-dark
-                                    rounded-xl sm:rounded-2xl p-3 sm:p-4 space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.25em]
-                                         text-[#d4af37] font-bold">
-                          Lattafa Pride
-                        </span>
-                        <span className="text-[9px] sm:text-[10px] text-[#94a3b8]
-                                         font-serif-luxury italic">
-                          Eau De Parfum
-                        </span>
-                      </div>
-                      <div className="font-serif-luxury text-lg sm:text-2xl text-white font-normal">
-                        Tharwah Gold
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm sm:text-base font-black text-[#d4af37]">
-                          GH₵450.00
-                        </span>
-                        <Link
-                          href="/products"
-                          className="flex items-center gap-1 text-[9px] sm:text-[10px]
-                                     uppercase font-bold tracking-widest text-[#f5e4ab]
-                                     hover:text-[#d4af37] transition-colors"
-                        >
-                          <span>View</span>
-                          <ArrowRight className="w-3 h-3" />
-                        </Link>
-                      </div>
+              <a
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+                  `Hello! I am admiring your fragrance collection on ${storeName} and would like to place an order.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline-luxury inline-flex items-center justify-center gap-2.5 px-7 sm:px-9 py-3.5 sm:py-4 rounded-full text-[11px] font-bold uppercase tracking-wider w-full xs:w-auto bg-black/50 backdrop-blur-md shadow-xl text-white hover:text-white"
+              >
+                <WhatsAppIcon className="w-4 h-4 text-[#25D366] flex-shrink-0" />
+                <span>Connect on WhatsApp</span>
+              </a>
+            </div>
+
+            {/* Trust stats & Delivery Notice (Ends the Hero Banner) */}
+            <div className="pt-6 sm:pt-10 w-full animate-fadeInUp" style={{ animationDelay: '0.35s' }}>
+              <div className="gold-divider mb-6 sm:mb-8 max-w-2xl mx-auto" />
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 text-center">
+                {[
+                  { value: 'Curated', label: 'Originals' },
+                  { value: 'GH₵', label: 'Direct Pricing' },
+                  { value: '24–48h', label: 'Dispatch' },
+                  { value: '5–10 Days', label: 'Delivery Time' },
+                ].map((stat) => (
+                  <div key={stat.label} className="space-y-1">
+                    <div className="font-serif-luxury text-[#d4af37] font-light text-2xl sm:text-3xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                      {stat.value}
+                    </div>
+                    <div className="text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] uppercase text-slate-200 font-semibold drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+                      {stat.label}
                     </div>
                   </div>
-                </div>
-
-                {/* Floating mini thumbnails — only on lg+ */}
-                <div className="hidden lg:block absolute -top-4 -right-4 w-24 xl:w-28
-                                glass-luxury rounded-2xl p-2 animate-float"
-                  style={{ animationDelay: '1s', animationDuration: '5s' }}>
-                  <div className="aspect-square rounded-xl overflow-hidden">
-                    <img src={HERO_IMAGES[1]} alt="" aria-hidden="true" className="w-full h-full object-cover" />
-                  </div>
-                </div>
-
-                <div className="hidden lg:block absolute -bottom-4 -left-4 w-20 xl:w-24
-                                glass-luxury rounded-2xl p-2 animate-float"
-                  style={{ animationDelay: '2s', animationDuration: '7s' }}>
-                  <div className="aspect-square rounded-xl overflow-hidden">
-                    <img src={HERO_IMAGES[2]} alt="" aria-hidden="true" className="w-full h-full object-cover" />
-                  </div>
-                </div>
-
-                {/* Authenticity Guarantee badge — only on lg+ */}
-                <div className="hidden lg:flex absolute top-1/2 -right-12 xl:-right-14
-                                glass-luxury-dark rounded-2xl px-3 xl:px-4 py-2.5 xl:py-3
-                                flex-col items-center gap-1 animate-gold-pulse">
-                  <ShieldCheck className="w-5 h-5 text-[#d4af37]" />
-                  <div className="text-[9px] uppercase tracking-widest text-[#f5e4ab] font-bold text-center">
-                    100% Authentic
-                  </div>
-                </div>
+                ))}
+              </div>
+              <div className="mt-5 flex items-center justify-center gap-2 text-xs text-slate-200 font-medium drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
+                <Truck className="w-4 h-4 text-[#d4af37] shrink-0" />
+                <span>Nationwide delivery is done in 5 to 10 working days across Ghana.</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t
-                        from-[#050508] to-transparent pointer-events-none" />
+        {/* Bottom subtle edge transition */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#050508] to-transparent pointer-events-none z-10" />
       </section>
 
       {/* Divider */}
@@ -493,20 +410,9 @@ export default async function HomePage() {
             ].map((feature) => (
               <div
                 key={feature.roman}
-                className="relative p-5 sm:p-7 lg:p-8 rounded-xl sm:rounded-2xl border
-                           transition-all duration-500 group hover:border-[#d4af37]/30"
-                style={{
-                  background: 'rgba(8, 10, 18, 0.85)',
-                  borderColor: 'rgba(212, 175, 55, 0.12)',
-                }}
+                className="relative p-5 sm:p-7 lg:p-8 rounded-xl sm:rounded-2xl glass-luxury-card
+                           transition-all duration-500 group"
               >
-                <div
-                  className="absolute inset-0 rounded-xl sm:rounded-2xl opacity-0
-                              group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    background: `radial-gradient(ellipse at top left, ${feature.color}08 0%, transparent 70%)`,
-                  }}
-                />
                 <div
                   className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center
                              justify-center font-serif-luxury text-lg sm:text-xl font-light mb-4 sm:mb-5"
@@ -518,68 +424,17 @@ export default async function HomePage() {
                 >
                   {feature.roman}
                 </div>
-                <h3 className="font-serif-luxury text-xl sm:text-2xl text-white mb-2 sm:mb-3 font-normal">
+                <h3 className="font-serif-luxury text-xl sm:text-2xl mb-2 sm:mb-3 font-normal"
+                    style={{ color: 'var(--text-primary, #0f172a)' }}>
                   {feature.title}
                 </h3>
-                <p className="text-xs text-[#64748b] font-light leading-relaxed">{feature.desc}</p>
+                <p className="text-xs font-normal leading-relaxed"
+                   style={{ color: 'var(--text-secondary, #475569)' }}>
+                  {feature.desc}
+                </p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ==================================================================
-          SCROLLABLE IMAGE STRIP — touch-friendly on mobile
-          ================================================================== */}
-      <section className="py-10 sm:py-16 overflow-hidden">
-        <div className="text-center mb-6 sm:mb-10 px-4">
-          <div className="section-label mb-2 sm:mb-3">The Vault</div>
-          <h2 className="font-serif-luxury text-white font-light"
-            style={{ fontSize: 'clamp(1.6rem, 5vw, 2.5rem)' }}>
-            Every Bottle,{' '}
-            <span className="gold-gradient-text italic">Real & In Stock</span>
-          </h2>
-        </div>
-
-        {/* Horizontally scrollable on mobile — touch-native */}
-        <div
-          className="flex gap-3 sm:gap-4 px-4 sm:px-6 pb-4"
-          style={{
-            overflowX: 'auto',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            WebkitOverflowScrolling: 'touch',
-          }}
-        >
-          {[...publishedProducts, ...publishedProducts].map((p, i) => {
-            const img = p.images[0]?.media?.url || MOSAIC_FALLBACKS[i % MOSAIC_FALLBACKS.length];
-            return (
-              <Link
-                key={`${p.id}-${i}`}
-                href={`/products/${p.slug}`}
-                className="flex-shrink-0 rounded-xl sm:rounded-2xl overflow-hidden
-                           glass-luxury-card group relative"
-                style={{ width: 'clamp(130px, 35vw, 200px)', aspectRatio: '3/4' }}
-              >
-                <img
-                  src={img}
-                  alt={p.name}
-                  className="w-full h-full object-cover group-hover:scale-110
-                             transition-transform duration-700 ease-out"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/90 via-transparent to-transparent" />
-                <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3">
-                  <div className="font-serif-luxury text-xs sm:text-sm text-white
-                                  leading-tight line-clamp-1">
-                    {p.name}
-                  </div>
-                  <div className="text-[9px] sm:text-[10px] text-[#d4af37] font-bold mt-0.5">
-                    {p.status === 'PUBLISHED' ? formatGhs(p.priceInGhs) : 'Inquire'}
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
         </div>
       </section>
 
